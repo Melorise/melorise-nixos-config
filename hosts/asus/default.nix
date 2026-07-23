@@ -25,6 +25,7 @@
     ../../modules/nvidia.nix
     ../../modules/users-tippy.nix
     ../../modules/packages.nix
+    ../../modules/spark-store.nix
   ];
 
   nix.settings.experimental-features = [

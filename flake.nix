@@ -17,6 +17,18 @@
 
     codex-desktop-linux-builder.url =
       "github:Melorise/codex-desktop-linux-builder/nix";
+
+    # Amber PM 本身提供 Flake package 与 NixOS module。
+    amber-pm = {
+      url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Spark Store 尚未提供 Flake outputs，仅将远程仓库作为固定源码输入。
+    spark-store-src = {
+      url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
+      flake = false;
+    };
   };
 
 
@@ -31,9 +43,20 @@
         inherit system;
         config.allowUnfree = true;
         overlays = [
-          (_final: _prev: {
+          (final: _prev: {
             codex-desktop =
               inputs.codex-desktop-linux-builder.packages.${system}.codex-desktop;
+
+            amber-pm =
+              inputs.amber-pm.packages.${system}.amber-pm;
+
+            # Spark Store 不是 Flake，直接从源码 input 调用其 Nix 包表达式。
+            spark-store =
+              final.callPackage
+                "${inputs.spark-store-src}/nix/package.nix"
+                {
+                  apm = final.amber-pm;
+                };
           })
         ];
       };
@@ -46,6 +69,9 @@
 
           modules = [
             hostModule
+
+            # 引入 Amber PM 的 NixOS module，注册 programs.amber-pm 配置项。
+            inputs.amber-pm.nixosModules.default
 
             home-manager.nixosModules.home-manager
             {

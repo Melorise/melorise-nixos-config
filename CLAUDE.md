@@ -32,6 +32,7 @@
 │   ├── networking.nix                系统级网络配置
 │   ├── nvidia.nix                    ASUS 混合显卡与 NVIDIA PRIME 配置
 │   ├── packages.nix                  系统级软件及其 NixOS 配置
+│   ├── spark-store.nix               Amber PM 与 Spark Store 系统级集成
 │   └── users-tippy.nix               系统级 tippy 用户配置
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
@@ -59,6 +60,7 @@
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
 - 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
+- Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，同时提供 package 与 NixOS module；Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
 - Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`；应用本身通过 `pkgs-thirdParty` 在 Home Manager 的 `development/ai-agent.nix` 中安装。
 
@@ -113,7 +115,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。Amber PM 的 NixOS module 也在此统一引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -135,6 +137,7 @@ programs.clash-verge = {
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop Cachix 信任配置、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
+- `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
 ### `home/tippy/`
