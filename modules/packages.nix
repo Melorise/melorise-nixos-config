@@ -22,7 +22,6 @@
     vim
     wget
     git
-    google-chrome
   ];
  
   
