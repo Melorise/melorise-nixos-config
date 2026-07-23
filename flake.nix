@@ -1,16 +1,6 @@
 {
   description = "tippy nixos";
 
-  nixConfig = {
-    extra-substituters = [
-      "https://melorise-codex-desktop.cachix.org"
-    ];
-
-    extra-trusted-public-keys = [
-      "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U="
-    ];
-  };
-
   inputs = {
     nixpkgs.url =
       "github:NixOS/nixpkgs/nixos-26.05";
@@ -24,17 +14,10 @@
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    codex-desktop-linux = {
-      url =
-        "github:ilysenko/codex-desktop-linux/b2f676cd718eeb29a6a9b0d3feb1ec098c3acf15";
-
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, codex-desktop-linux, ... }:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
       system = "x86_64-linux";
       pkgs-unstable = import nixpkgs-unstable {
@@ -55,9 +38,7 @@
             {
               home-manager.users.tippy = import ./home/tippy;
 
-              home-manager.extraSpecialArgs = {
-                inherit pkgs-unstable codex-desktop-linux;
-              };
+              home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
             }

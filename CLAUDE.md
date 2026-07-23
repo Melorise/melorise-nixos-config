@@ -12,7 +12,7 @@
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义输入、Codex Desktop 源和两台设备输出
+├── flake.nix                         Flake 入口；定义输入和两台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -35,7 +35,7 @@
 │   └── users-tippy.nix               系统级 tippy 用户配置
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
-    ├── ai-agent.nix                  AI agent 类用户软件及 Codex Desktop
+    ├── ai-agent.nix                  AI agent 类用户软件
     ├── git.nix                       Git 用户配置
     ├── nodejs.nix                    Node.js 与 npm 用户配置
     ├── python.nix                    Python 3.14 用户环境
@@ -104,7 +104,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与固定提交的 Codex Desktop Linux 输入，并通过顶层 `nixConfig` 在构建阶段启用 Codex Desktop Cachix。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置，并将 Codex Desktop 输入传给 Home Manager；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs 与 Home Manager 输入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -125,13 +125,13 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
-- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、`allowUnfree`、Clash Verge 和少量基础工具。Codex Desktop 应用本身由 Home Manager 安装，其构建缓存在 `flake.nix` 中配置；新增普通用户态软件不应默认放在这里。
+- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
 ### `home/tippy/`
 
 - `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入所有用户级分类配置。
-- `home/tippy/ai-agent.nix`：AI agent 类用户软件，统一使用 `pkgs-unstable`。Claude Code、Codex、OpenCode、cc-switch 及后续同类软件均放在这里；同时导入上游 Home Manager 模块安装 Codex Desktop，并绑定 unstable Codex CLI。
+- `home/tippy/ai-agent.nix`：AI agent 类用户软件，统一使用 `pkgs-unstable`。Claude Code、Codex、OpenCode、cc-switch 及后续同类软件均放在这里。
 - `home/tippy/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
 - `home/tippy/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。

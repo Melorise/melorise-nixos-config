@@ -1,10 +1,6 @@
-{ pkgs-unstable, codex-desktop-linux, ... }:
+{ pkgs-unstable, ... }:
 
 {
-  imports = [
-    codex-desktop-linux.homeManagerModules.default
-  ];
-
   home.packages = with pkgs-unstable; [
     claude-code
     codex
@@ -13,8 +9,4 @@
     cc-switch
   ];
 
-  programs.codexDesktopLinux = {
-    enable = true;
-    cliPackage = pkgs-unstable.codex;
-  };
 }
