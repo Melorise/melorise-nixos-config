@@ -2,19 +2,9 @@
 
 {
 
-  nix.settings = {
-    substituters = [
-      "https://mirrors.cernet.edu.cn/nix-channels/store"
-    ];
-
-    extra-substituters = [
-      "https://melorise-codex-desktop.cachix.org"
-    ];
-
-    extra-trusted-public-keys = [
-      "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U="
-    ];
-  };
+  nix.settings.substituters = [
+    "https://mirrors.cernet.edu.cn/nix-channels/store"
+  ];
 
   nixpkgs.config.allowUnfree = true;
   
