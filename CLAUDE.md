@@ -28,6 +28,7 @@
 │   ├── desktop-cinnamon.nix          系统级 Cinnamon 桌面配置
 │   ├── locale.nix                    系统级中文 locale 和 Fcitx5 配置
 │   ├── networking.nix                系统级网络配置
+│   ├── nvidia.nix                    ASUS 混合显卡与 NVIDIA PRIME 配置
 │   ├── packages.nix                  系统级软件及其 NixOS 配置
 │   └── users-tippy.nix               系统级 tippy 用户配置
 └── home/tippy/
@@ -118,6 +119,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 - `modules/desktop-cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager。
+- `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
