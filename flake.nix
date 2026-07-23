@@ -20,7 +20,7 @@
   };
 
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, codex-desktop-linux-builder, ... }:
+  outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
       system = "x86_64-linux";
       pkgs-unstable = import nixpkgs-unstable {
@@ -33,7 +33,7 @@
         overlays = [
           (_final: _prev: {
             codex-desktop =
-              codex-desktop-linux-builder.packages.${system}.codex-desktop;
+              inputs.codex-desktop-linux-builder.packages.${system}.codex-desktop;
           })
         ];
       };

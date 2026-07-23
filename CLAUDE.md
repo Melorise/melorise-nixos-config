@@ -56,7 +56,7 @@
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
-- 第三方包的来源和 overlay 定义集中在 `flake.nix`；需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
+- 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
 - Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`。首次仅引入来源和缓存配置时不安装该软件，以避免触发构建。
 
