@@ -13,6 +13,7 @@
     ../../modules/locale.nix
     ../../modules/desktop-cinnamon.nix
     ../../modules/audio.nix
+    ../../modules/gc.nix
     ../../modules/nvidia.nix
     ../../modules/users-tippy.nix
     ../../modules/packages.nix
