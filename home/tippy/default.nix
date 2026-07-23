@@ -8,13 +8,13 @@
   
 
   imports = [
-    ./ssh.nix
-    ./git.nix
-    ./nodejs.nix
-    ./python.nix
-    ./packages.nix
-    ./packages-unstable.nix
-    ./ai-agent.nix
+    ./development/ssh.nix
+    ./development/git.nix
+    ./development/nodejs.nix
+    ./development/python.nix
+    ./development/ai-agent.nix
+    ./packages/packages.nix
+    ./packages/packages-unstable.nix
   ];
 
 }

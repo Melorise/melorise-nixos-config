@@ -35,13 +35,15 @@
 │   └── users-tippy.nix               系统级 tippy 用户配置
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
-    ├── ai-agent.nix                  AI agent 类用户软件及 Codex Desktop
-    ├── git.nix                       Git 用户配置
-    ├── nodejs.nix                    Node.js 与 npm 用户配置
-    ├── python.nix                    Python 3.14 用户环境
-    ├── packages.nix                  稳定版通用用户软件
-    ├── packages-unstable.nix         unstable 通用用户软件
-    └── ssh.nix                       SSH 用户配置
+    ├── development/                  开发相关软件与配置
+    │   ├── ai-agent.nix              AI agent 类用户软件及 Codex Desktop
+    │   ├── git.nix                   Git 用户配置
+    │   ├── nodejs.nix                Node.js 与 npm 用户配置
+    │   ├── python.nix                Python 3.14 用户环境
+    │   └── ssh.nix                   SSH 用户配置
+    └── packages/                     日常及其他普通用户软件
+        ├── packages.nix              稳定版通用用户软件
+        └── packages-unstable.nix     unstable 通用用户软件
 ```
 
 ## 配置分层
@@ -58,7 +60,7 @@
 - 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
 - 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
-- Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`；应用本身通过 `pkgs-thirdParty` 在 Home Manager 的 `ai-agent.nix` 中安装。
+- Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`；应用本身通过 `pkgs-thirdParty` 在 Home Manager 的 `development/ai-agent.nix` 中安装。
 
 ## 软件与配置的放置规则
 
@@ -92,21 +94,20 @@ programs.clash-verge = {
 
 ### Home Manager 的分类优先级
 
-用户态软件先判断是否属于已有的专用分类；只有不属于专用分类的软件，才进入通用软件包文件。
+用户态软件先判断是否与开发相关。开发相关的软件与配置放入 `home/tippy/development/`；日常软件和其他普通软件放入 `home/tippy/packages/`。
 
 分类顺序如下：
 
-1. 有明确用途或需要配套配置的软件，放入对应专用文件。
-   - AI agent 相关软件放入 `ai-agent.nix`。
-   - Node.js 相关软件和 npm 环境变量放入 `nodejs.nix`。
-   - Python 解释器及相关环境配置放入 `python.nix`。
-   - Git 配置放入 `git.nix`。
-   - SSH 配置放入 `ssh.nix`。
-2. 不属于任何专用分类的普通用户软件，再按更新频率选择通用文件：
-   - `packages-unstable.nix`：更新频繁、无需刻意控制版本的软件，例如 Chrome。
-   - `packages.nix`：时效性不强、可以数月不更新的软件，例如 `ripgrep`、`fd`、`htop`。
-
-AI agent 只是专用分类的一个例子。后续出现新的明确类别时，应新建语义清晰的专用文件并在 `home/tippy/default.nix` 导入，而不是把所有软件都堆入两个通用 packages 文件。
+1. 开发相关的软件与配置放入 `development/` 下的对应专用文件。
+   - AI agent 相关软件放入 `development/ai-agent.nix`。
+   - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
+   - Python 解释器及相关环境配置放入 `development/python.nix`。
+   - Git 配置放入 `development/git.nix`。
+   - SSH 配置放入 `development/ssh.nix`。
+   - 后续出现新的开发类别时，应在 `development/` 下新建语义清晰的专用文件，并在 `home/tippy/default.nix` 中导入。
+2. 日常软件和其他普通软件放入 `packages/`，继续按更新频率选择文件：
+   - `packages/packages-unstable.nix`：更新频繁、无需刻意控制版本的软件，例如 Chrome。
+   - `packages/packages.nix`：时效性不强、可以数月不更新的软件，例如 `ripgrep`、`fd`、`htop`。
 
 ## 文件说明
 
@@ -139,10 +140,12 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 ### `home/tippy/`
 
 - `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入所有用户级分类配置。
-- `home/tippy/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，Codex Desktop 使用 `pkgs-thirdParty`；同时通过用户级 desktop entry 仅为 Codex Desktop 设置 XIM，以绕过其内置旧版 GLib 与系统 `fcitx5-gtk` 的兼容问题并保持 Cachix 原包命中。后续同类软件均放在这里。
-- `home/tippy/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
-- `home/tippy/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
-- `home/tippy/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
-- `home/tippy/packages.nix`：稳定版通用用户软件，存放不属于专用分类且更新频率较低的软件。
-- `home/tippy/packages-unstable.nix`：unstable 通用用户软件，存放不属于专用分类但更新频繁的软件；已由 `default.nix` 导入。
-- `home/tippy/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
+- `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
+- `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，Codex Desktop 使用 `pkgs-thirdParty`；同时通过用户级 desktop entry 仅为 Codex Desktop 设置 XIM，以绕过其内置旧版 GLib 与系统 `fcitx5-gtk` 的兼容问题并保持 Cachix 原包命中。后续同类软件均放在这里。
+- `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
+- `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
+- `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
+- `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
+- `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
+- `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。
+- `home/tippy/packages/packages-unstable.nix`：unstable 通用用户软件，存放更新频繁、无需刻意控制版本的软件；已由 `default.nix` 导入。
