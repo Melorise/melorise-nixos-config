@@ -12,7 +12,7 @@
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义输入和两台设备输出
+├── flake.nix                         Flake 入口；定义包集、第三方源和两台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -51,6 +51,14 @@
 - 绝大部分用户态软件应安装在 Home Manager。
 - 系统级仅安装少量通用软件，或必须依赖系统服务、系统权限、网络/TUN、桌面服务等 NixOS 配置的软件。
 - 新增用户态软件时，优先放入 `home/tippy/`；不要因为方便而直接添加到 `modules/packages.nix`。
+
+## 包集与第三方来源
+
+- `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
+- 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
+- 第三方包的来源和 overlay 定义集中在 `flake.nix`；需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
+- Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
+- Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`。首次仅引入来源和缓存配置时不安装该软件，以避免触发构建。
 
 ## 软件与配置的放置规则
 
@@ -104,7 +112,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs 与 Home Manager 输入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -125,7 +133,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
-- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
+- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop Cachix 信任配置、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
 ### `home/tippy/`

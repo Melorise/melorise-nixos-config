@@ -14,22 +14,35 @@
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    codex-desktop-linux-builder.url =
+      "github:Melorise/codex-desktop-linux-builder/nix";
   };
 
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, codex-desktop-linux-builder, ... }:
     let
       system = "x86_64-linux";
       pkgs-unstable = import nixpkgs-unstable {
         inherit system;
         config.allowUnfree = true;
       };
+      pkgs-thirdParty = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [
+          (_final: _prev: {
+            codex-desktop =
+              codex-desktop-linux-builder.packages.${system}.codex-desktop;
+          })
+        ];
+      };
 
       mkHost = hostModule:
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit pkgs-unstable; };
+          specialArgs = { inherit pkgs-unstable pkgs-thirdParty; };
 
           modules = [
             hostModule
@@ -38,7 +51,9 @@
             {
               home-manager.users.tippy = import ./home/tippy;
 
-              home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
+              home-manager.extraSpecialArgs = {
+                inherit pkgs-unstable pkgs-thirdParty;
+              };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
             }
