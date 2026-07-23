@@ -38,6 +38,7 @@
     ├── ai-agent.nix                  AI agent 类用户软件
     ├── git.nix                       Git 用户配置
     ├── nodejs.nix                    Node.js 与 npm 用户配置
+    ├── python.nix                    Python 3.14 用户环境
     ├── packages.nix                  稳定版通用用户软件
     ├── packages-unstable.nix         unstable 通用用户软件
     └── ssh.nix                       SSH 用户配置
@@ -90,6 +91,7 @@ programs.clash-verge = {
 1. 有明确用途或需要配套配置的软件，放入对应专用文件。
    - AI agent 相关软件放入 `ai-agent.nix`。
    - Node.js 相关软件和 npm 环境变量放入 `nodejs.nix`。
+   - Python 解释器及相关环境配置放入 `python.nix`。
    - Git 配置放入 `git.nix`。
    - SSH 配置放入 `ssh.nix`。
 2. 不属于任何专用分类的普通用户软件，再按更新频率选择通用文件：
@@ -132,6 +134,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 - `home/tippy/ai-agent.nix`：AI agent 类用户软件，统一使用 `pkgs-unstable`。Claude Code、Codex、OpenCode、cc-switch 及后续同类软件均放在这里。
 - `home/tippy/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
+- `home/tippy/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
 - `home/tippy/packages.nix`：稳定版通用用户软件，存放不属于专用分类且更新频率较低的软件。
 - `home/tippy/packages-unstable.nix`：unstable 通用用户软件，存放不属于专用分类但更新频繁的软件；已由 `default.nix` 导入。
 - `home/tippy/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。

@@ -11,6 +11,7 @@
     ./ssh.nix
     ./git.nix
     ./nodejs.nix
+    ./python.nix
     ./packages.nix
     ./packages-unstable.nix
     ./ai-agent.nix
