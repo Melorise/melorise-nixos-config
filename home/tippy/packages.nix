@@ -5,5 +5,7 @@
     ripgrep
     fd
     htop
+
+    qq
   ];
 }

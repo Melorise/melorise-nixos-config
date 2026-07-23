@@ -32,6 +32,7 @@
     vim
     wget
     git
+    fastfetch
   ];
  
   
