@@ -16,6 +16,7 @@
     ../../modules/fonts.nix
     ../../modules/desktop-cinnamon.nix
     ../../modules/audio.nix
+    ../../modules/filesystems.nix
     ../../modules/gc.nix
     ../../modules/users-tippy.nix
     ../../modules/packages.nix

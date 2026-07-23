@@ -22,6 +22,7 @@
     ../../modules/fonts.nix
     ../../modules/desktop-cinnamon.nix
     ../../modules/audio.nix
+    ../../modules/filesystems.nix
     ../../modules/gc.nix
     ../../modules/nvidia.nix
     ../../modules/users-tippy.nix

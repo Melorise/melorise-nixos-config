@@ -27,6 +27,7 @@
 ├── modules/
 │   ├── audio.nix                     系统级 PipeWire 音频配置
 │   ├── desktop-cinnamon.nix          系统级 Cinnamon 桌面配置
+│   ├── filesystems.nix                系统级文件系统工具与 UDisks 挂载驱动配置
 │   ├── fonts.nix                     系统级中文默认字体与字体包配置
 │   ├── gc.nix                        系统世代保留数量配置
 │   ├── locale.nix                    系统级中文 locale 和 Fcitx5 配置
@@ -133,6 +134,7 @@ programs.clash-verge = {
 
 - `modules/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
 - `modules/desktop-cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
+- `modules/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
 - `modules/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
 - `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
