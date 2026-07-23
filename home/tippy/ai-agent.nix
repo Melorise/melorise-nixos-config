@@ -1,12 +1,16 @@
-{ pkgs-unstable, ... }:
+{ pkgs-unstable, pkgs-thirdParty, ... }:
 
 {
-  home.packages = with pkgs-unstable; [
-    claude-code
-    codex
-    opencode
+  home.packages =
+    (with pkgs-unstable; [
+      claude-code
+      codex
+      opencode
 
-    cc-switch
-  ];
+      cc-switch
+    ])
+    ++ (with pkgs-thirdParty; [
+      codex-desktop
+    ]);
 
 }
