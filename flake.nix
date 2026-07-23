@@ -36,5 +36,25 @@
           }
         ];
       };
+    nixosConfigurations.asus =
+      nixpkgs.lib.nixosSystem {
+
+        system = "x86_64-linux";
+
+        modules = [
+
+          ./hosts/asus/configuration.nix
+
+          home-manager.nixosModules.home-manager
+
+          {
+            home-manager.users.tippy =
+              import ./home/tippy.nix;
+
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+          }
+        ];
+      };
   };
 }

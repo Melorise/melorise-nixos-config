@@ -4,13 +4,14 @@
 
   nix.settings.substituters = [
     "https://mirrors.cernet.edu.cn/nix-channels/store"
-    "https://mirror.sjtu.edu.cn/nix-channels/store"
   ];
 
   nixpkgs.config.allowUnfree = true;
-
-  programs.firefox.enable = true;
-
+  
+  #firefox
+  #programs.firefox.enable = true;
+  
+  #clash-verge-rev
   programs.clash-verge.enable = true;
   programs.clash-verge.tunMode = true;
   programs.clash-verge.serviceMode = true;
@@ -19,6 +20,7 @@
     vim
     wget
     git
+    google-chrome
   ];
   
   

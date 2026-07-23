@@ -1,12 +1,10 @@
 { ... }:
 
-{
-
-  networking.hostName = "tippy-nix"; # Define your hostname.
+{ 
+  networking.hostName = "tippy-asus"; # Define your hostname.
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   imports = [
     ./hardware-configuration.nix
