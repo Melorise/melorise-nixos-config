@@ -19,6 +19,7 @@
 
     ../../modules/networking.nix
     ../../modules/locale.nix
+    ../../modules/fonts.nix
     ../../modules/desktop-cinnamon.nix
     ../../modules/audio.nix
     ../../modules/gc.nix
