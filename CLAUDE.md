@@ -15,7 +15,7 @@
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
-├── README                            常用维护命令记录
+├── README.md                         项目简介与常用维护命令
 ├── hosts/
 │   ├── desktop/
 │   │   ├── default.nix               台式机设备配置与 GRUB 设置
@@ -103,7 +103,7 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
-- `README`：常用 Nix 命令记录。记录不代表可以自行执行，仍须遵守本文件的基础原则。
+- `README.md`：项目简介与常用 Nix 命令记录。记录不代表可以自行执行，仍须遵守本文件的基础原则。
 
 ### `hosts/`
 
