@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "amber-pm": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784815912,
+        "narHash": "sha256-d/1aGoCb4Y6V9LWtbWJe3zJ/FV8tpH5BNq0u8FYRjwQ=",
+        "ref": "nixos",
+        "rev": "8c5aefe207f2d3bc047e2becd541cb3efb2489e2",
+        "revCount": 251,
+        "type": "git",
+        "url": "https://gitee.com/Melorise/amber-pm.git"
+      },
+      "original": {
+        "ref": "nixos",
+        "type": "git",
+        "url": "https://gitee.com/Melorise/amber-pm.git"
+      }
+    },
     "codex-desktop-linux-builder": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -109,10 +130,29 @@
     },
     "root": {
       "inputs": {
+        "amber-pm": "amber-pm",
         "codex-desktop-linux-builder": "codex-desktop-linux-builder",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "spark-store-src": "spark-store-src"
+      }
+    },
+    "spark-store-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784811406,
+        "narHash": "sha256-jljm7QEiMMHQ6DuaXqfHopWp87H+Gx42DdOAo7Q4nwM=",
+        "ref": "nixos",
+        "rev": "7bb54ae8a10519b8ec6de59246e562b6de4c2cf0",
+        "revCount": 462,
+        "type": "git",
+        "url": "https://gitee.com/Melorise/spark-store.git"
+      },
+      "original": {
+        "ref": "nixos",
+        "type": "git",
+        "url": "https://gitee.com/Melorise/spark-store.git"
       }
     },
     "systems": {
