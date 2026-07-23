@@ -12,6 +12,7 @@
     ./git.nix
     ./nodejs.nix
     ./packages.nix
+    ./packages-unstable.nix
     ./ai-agent.nix
   ];
 
