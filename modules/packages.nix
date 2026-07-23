@@ -12,9 +12,11 @@
   #programs.firefox.enable = true;
   
   #clash-verge-rev
-  programs.clash-verge.enable = true;
-  programs.clash-verge.tunMode = true;
-  programs.clash-verge.serviceMode = true;
+  programs.clash-verge = {
+    enable = true;
+    tunMode = true;
+    serviceMode = true;
+  };
 
   environment.systemPackages = with pkgs; [
     vim
@@ -22,6 +24,6 @@
     git
     google-chrome
   ];
-  
+ 
   
 }
