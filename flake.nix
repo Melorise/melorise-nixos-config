@@ -18,76 +18,37 @@
 
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }:
-  {
-    nixosConfigurations.desktop =
-      nixpkgs.lib.nixosSystem {
-
-        system = "x86_64-linux";
-        
-        specialArgs = {
-          pkgs-unstable =
-            import nixpkgs-unstable {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-          };
-        };
-
-        modules = [
-
-          ./hosts/desktop
-
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.users.tippy =
-            import ./home/tippy;
-
-            home-manager.extraSpecialArgs = {
-              pkgs-unstable =
-                import nixpkgs-unstable {
-                  system = "x86_64-linux";
-                  config.allowUnfree = true;
-              };
-            };
-
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-          }
-        ];
+    let
+      system = "x86_64-linux";
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
       };
-    nixosConfigurations.asus =
-      nixpkgs.lib.nixosSystem {
 
-        system = "x86_64-linux";
+      mkHost = hostModule:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        specialArgs = {
-          pkgs-unstable =
-            import nixpkgs-unstable {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-          };
+          specialArgs = { inherit pkgs-unstable; };
+
+          modules = [
+            hostModule
+
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.users.tippy = import ./home/tippy;
+
+              home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+          ];
         };
-
-        modules = [
-
-          ./hosts/asus
-
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.users.tippy =
-            import ./home/tippy;
-
-            home-manager.extraSpecialArgs = {
-              pkgs-unstable =
-                import nixpkgs-unstable {
-                  system = "x86_64-linux";
-                  config.allowUnfree = true;
-              };
-            };
-
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-          }
-        ];
+    in
+    {
+      nixosConfigurations = {
+        desktop = mkHost ./hosts/desktop;
+        asus = mkHost ./hosts/asus;
       };
-  };
+    };
 }
