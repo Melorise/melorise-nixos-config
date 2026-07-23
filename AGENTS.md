@@ -22,7 +22,7 @@
 │   │   ├── default.nix               台式机设备配置与 GRUB 设置
 │   │   └── hardware-configuration.nix 台式机硬件/磁盘生成配置
 │   └── asus/
-│       ├── default.nix               华硕设备配置与 systemd-boot 设置
+│       ├── default.nix               华硕设备配置与 GRUB/Windows 探测设置
 │       └── hardware-configuration.nix 华硕硬件/磁盘生成配置
 ├── modules/
 │   ├── audio.nix                     系统级 PipeWire 音频配置
@@ -112,14 +112,14 @@ AI agent 只是专用分类的一个例子。后续出现新的明确类别时�
 
 - `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式，并导入通用系统模块。
 - `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、systemd-boot/EFI 引导方式，并导入通用系统模块。
+- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名和 UEFI GRUB，启用 Windows 启动项探测，并导入通用系统模块。
 - `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
 
 ### `modules/`
 
 - `modules/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
 - `modules/desktop-cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/gc.nix`：限制 GRUB 和 systemd-boot 最多保留 10 个可启动的系统世代。
+- `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。

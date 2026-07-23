@@ -3,8 +3,16 @@
 { 
   networking.hostName = "tippy-asus"; # Define your hostname.
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    efi.canTouchEfiVariables = true;
+
+    grub = {
+      enable = true;
+      efiSupport = true;
+      device = "nodev";
+      useOSProber = true;
+    };
+  };
 
   imports = [
     ./hardware-configuration.nix
