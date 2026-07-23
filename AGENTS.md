@@ -6,6 +6,7 @@
 当我要求你进行修改时，你必须向我汇报你的改动计划，然后才能修改。
 你只允许改动文件本身。绝对禁止自行执行nix flake lock, nix flake update, nixos-rebuild等任何指令。
 每次更改，提交git commit,但不要推送到远程。
+如果有内容变化或文件新增，更新AGENTS.md并拷贝一份到CLAUDE.md。
 
 ## 结构概览
 
