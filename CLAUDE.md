@@ -38,7 +38,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── fonts.nix                     系统级中文默认字体与字体包配置
 │   ├── gc.nix                        系统世代保留数量配置
 │   ├── locale.nix                    系统级中文 locale 和 Fcitx5 配置
-│   ├── networking.nix                系统级网络配置
+│   ├── networking.nix                系统级网络与本地 DNS 配置
 │   ├── nvidia.nix                    ASUS 混合显卡与 NVIDIA PRIME 配置
 │   ├── packages.nix                  系统级软件及其 NixOS 配置
 │   ├── spark-store.nix               Amber PM 与 Spark Store 系统级集成
@@ -145,7 +145,7 @@ programs.clash-verge = {
 - `modules/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
 - `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
-- `modules/networking.nix`：启用无线网络支持和 NetworkManager。
+- `modules/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop Cachix 信任配置、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
