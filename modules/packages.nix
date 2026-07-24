@@ -27,6 +27,9 @@
     tunMode = true;
     serviceMode = true;
   };
+  
+  # 用于自动进入开发环境的direnv
+  programs.direnv.enable = true;
 
   environment.systemPackages = with pkgs; [
     vim

@@ -3,10 +3,17 @@
 这是我的个人nixos配置，使用nix flakes + home manager管理。当前NixOS版本为26.05。
 
 ## 你需要协助我管理，但不能越权
-当我要求你进行修改时，你必须向我汇报你的改动计划。未经我明确的对话进行授权，严禁进行修改。绝对禁止汇报个计划就自动开始动工而未收到我的确认指令。
-你只允许改动文件本身。绝对禁止自行执行nix flake lock, nix flake update, nixos-rebuild等任何指令。
-每次更改，提交git commit,但不要推送到远程。
-如果有内容变化或文件新增，更新AGENTS.md并拷贝一份到CLAUDE.md。
+当我要求你进行修改时，你必须向我汇报你的改动计划。   
+未经我明确的对话进行授权确认你的计划，严禁进行修改。
+绝对禁止汇报个计划就自动开始动工而未收到我的确认指令。    
+
+你只允许改动文件本身。绝对禁止自行执行nix flake lock, nix flake update, nixos-rebuild等任何指令。  
+
+每次更改，提交git commit,但不要推送到远程。  
+
+如果有内容变化或文件新增，更新AGENTS.md并拷贝一份到CLAUDE.md。   
+
+AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在文件说明里。
 
 ## 结构概览
 
@@ -39,7 +46,7 @@
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
     ├── development/                  开发相关软件与配置
-    │   ├── ai-agent.nix              AI agent 类用户软件及 Codex Desktop
+    │   ├── ai-agent.nix              AI agent 类用户软件
     │   ├── git.nix                   Git 用户配置
     │   ├── nodejs.nix                Node.js 与 npm 用户配置
     │   ├── python.nix                Python 3.14 用户环境
