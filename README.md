@@ -2,16 +2,13 @@
 
 这是我的个人 NixOS 配置仓库，基于 Nix Flakes 和 Home Manager 管理，当前使用 NixOS 26.05。
 
-仓库目前包含两台设备的配置：
+本项目采用MPL V2许可证开源，请遵守许可证使用。  
 
-- `desktop`：台式机配置。
-- `asus`：华硕设备配置。
-
-系统级配置位于 `hosts/` 和 `modules/`，用户级配置位于 `home/tippy/`。
+建议使用AI Agent辅助管理。项目配备有完善的AGENTS.md和CLAUDE.md编码围栏。
 
 ## 常用命令
 
-以下命令需要由用户根据实际需要手动执行。
+以下命令需要手动执行。
 
 ### 初始化 Flake 锁文件
 
