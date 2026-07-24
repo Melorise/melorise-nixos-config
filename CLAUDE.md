@@ -71,7 +71,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
 - Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，同时提供 package 与 NixOS module；Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
-- Codex Desktop Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`；应用本身通过 `pkgs-thirdParty` 在 Home Manager 的 `development/ai-agent.nix` 中安装。
+- Codex Desktop 与 cp-nix Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`；Codex Desktop 应用本身通过 `pkgs-thirdParty` 在 Home Manager 的 `development/ai-agent.nix` 中安装。cp-nix 当前仅预置信任配置，尚未接入软件包。
 
 ## 软件与配置的放置规则
 
@@ -147,7 +147,7 @@ programs.clash-verge = {
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
-- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop Cachix 信任配置、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
+- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop 与 cp-nix Cachix 信任配置、`allowUnfree`、Clash Verge、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
