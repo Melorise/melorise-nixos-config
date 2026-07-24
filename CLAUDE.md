@@ -68,8 +68,9 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
+- 第三方软件自身提供 Flake 时，优先直接使用来源 Flake 的 outputs 及其锁定包集；不得为这类 input 设置 `inputs.nixpkgs.follows = "nixpkgs"`。
 - 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
-- Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，同时提供 package 与 NixOS module；Clash Party 使用 `Melorise/cp-nix`，同时提供 package 与 NixOS module；这两个第三方模块通过 `thirdPartyNixosModules` 统一引入。Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
+- Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，Clash Party 使用 `Melorise/cp-nix`；两者均直接使用来源 Flake 自身的 package、NixOS module 和锁定包集，并通过 `thirdPartyNixosModules` 统一引入模块。Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
 - Codex Desktop 与 cp-nix Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`。Codex Desktop 与 Clash Party 均通过 `pkgs-thirdParty` 提供；Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过其 NixOS module 在 `modules/packages.nix` 中启用。
 

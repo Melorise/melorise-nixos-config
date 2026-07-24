@@ -22,13 +22,11 @@
 
     cp-nix = {
       url = "github:Melorise/cp-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Amber PM 本身提供 Flake package 与 NixOS module。
     amber-pm = {
       url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Spark Store 尚未提供 Flake outputs，仅将远程仓库作为固定源码输入。
