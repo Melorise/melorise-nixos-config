@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, pkgs-unstable, pkgs-thirdParty, ... }:
 
 {
 
@@ -27,6 +27,12 @@
   programs.clash-verge = {
     enable = true;
     serviceMode = true;
+  };
+
+  # clash-party
+  programs.clash-party = {
+    enable = true;
+    package = pkgs-thirdParty.clash-party;
   };
   
   # 用于自动进入开发环境的direnv

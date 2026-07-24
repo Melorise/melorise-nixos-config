@@ -20,6 +20,11 @@
     codex-desktop-linux-builder.url =
       "github:Melorise/codex-desktop-linux-builder/nix";
 
+    cp-nix = {
+      url = "github:Melorise/cp-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Amber PM 本身提供 Flake package 与 NixOS module。
     amber-pm = {
       url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
@@ -49,6 +54,9 @@
             codex-desktop =
               inputs.codex-desktop-linux-builder.packages.${system}.codex-desktop;
 
+            clash-party =
+              inputs.cp-nix.packages.${system}.clash-party;
+
             amber-pm =
               inputs.amber-pm.packages.${system}.amber-pm;
 
@@ -63,29 +71,35 @@
         ];
       };
 
+      thirdPartyNixosModules =
+        map
+          (name: inputs.${name}.nixosModules.default)
+          [
+            "amber-pm"
+            "cp-nix"
+          ];
+
       mkHost = hostModule:
         nixpkgs.lib.nixosSystem {
           inherit system;
 
           specialArgs = { inherit pkgs-unstable pkgs-thirdParty; };
 
-          modules = [
-            hostModule
+          modules =
+            [ hostModule ]
+            ++ thirdPartyNixosModules
+            ++ [
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.users.tippy = import ./home/tippy;
 
-            # 引入 Amber PM 的 NixOS module，注册 programs.amber-pm 配置项。
-            inputs.amber-pm.nixosModules.default
-
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.users.tippy = import ./home/tippy;
-
-              home-manager.extraSpecialArgs = {
-                inherit pkgs-unstable pkgs-thirdParty;
-              };
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
+                home-manager.extraSpecialArgs = {
+                  inherit pkgs-unstable pkgs-thirdParty;
+                };
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+              }
+            ];
         };
     in
     {
