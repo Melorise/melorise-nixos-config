@@ -17,6 +17,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mnpr.url = "github:Melorise/MNPR/unstable";
+
     codex-desktop-linux-builder.url =
       "github:Melorise/codex-desktop-linux-builder/nix";
 
@@ -84,7 +86,10 @@
           specialArgs = { inherit pkgs-unstable pkgs-thirdParty; };
 
           modules =
-            [ hostModule ]
+            [
+              hostModule
+              inputs.mnpr.nixosModules.caches
+            ]
             ++ thirdPartyNixosModules
             ++ [
               home-manager.nixosModules.home-manager

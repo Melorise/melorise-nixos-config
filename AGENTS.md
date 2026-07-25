@@ -19,7 +19,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义包集、第三方源和两台设备输出
+├── flake.nix                         Flake 入口；定义包集、MNPR 缓存、第三方源和两台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -70,9 +70,10 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
 - 第三方软件自身提供 Flake 时，优先直接使用来源 Flake 的 outputs 及其锁定包集；不得为这类 input 设置 `inputs.nixpkgs.follows = "nixpkgs"`。
 - 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
+- MNPR 作为独立 Flake input 仅提供选择性缓存模块；通过 `inputs.mnpr.nixosModules.caches` 引入，并在系统软件模块中按条目名称启用所需缓存。MNPR input 不设置 `nixpkgs.follows`，当前不通过 MNPR 转发第三方软件包或默认模块。
 - Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，Clash Party 使用 `Melorise/cp-nix`；两者均直接使用来源 Flake 自身的 package、NixOS module 和锁定包集，并通过 `thirdPartyNixosModules` 统一引入模块。Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
 - Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
-- Codex Desktop 与 cp-nix Cachix 的 URL 和公钥属于 Nix daemon 配置，放在 `modules/packages.nix`。Codex Desktop 与 Clash Party 均通过 `pkgs-thirdParty` 提供；Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过其 NixOS module 在 `modules/packages.nix` 中启用。
+- Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages.nix` 只按条目名称选择启用。Codex Desktop 与 Clash Party 的软件包仍由各自直接 Flake input 通过 `pkgs-thirdParty` 提供；Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过其上游 NixOS module 在 `modules/packages.nix` 中启用。
 
 ## 软件与配置的放置规则
 
@@ -125,7 +126,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。提供默认 NixOS module 的第三方输入通过 `thirdPartyNixosModules` 统一引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、MNPR 缓存与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。MNPR 仅提供选择性缓存模块；提供默认 NixOS module 的第三方软件输入通过 `thirdPartyNixosModules` 统一引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -148,7 +149,7 @@ programs.clash-verge = {
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
 - `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
-- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、Codex Desktop 与 cp-nix Cachix 信任配置、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
+- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
 
