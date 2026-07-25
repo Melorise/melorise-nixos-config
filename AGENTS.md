@@ -67,12 +67,12 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 ## 包集与第三方来源
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
-- 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- MNPR 是当前第三方软件的统一 Flake input。本仓库通过通用 overlay 将 `inputs.mnpr.packages.${system}` 的全部软件包加入 `pkgs-thirdParty`，不在本地逐个映射包名；各模块只接收单一的 `pkgs-thirdParty` 参数。
-- MNPR 应保留各上游自身的锁定输入图，不设置 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写转发的软件包，以保持上游缓存命中。
-- MNPR 转发的默认 NixOS module 通过 `thirdPartyNixosModules` 按条目名称统一聚合；只加入本配置实际使用的模块，避免 MNPR 后续新增模块时被自动启用。选择性缓存模块通过 `inputs.mnpr.nixosModules.caches` 单独引入，并在系统软件模块中按条目名称启用所需缓存。
-- Amber PM 使用 MNPR 的 `amber-pm` 条目，Clash Party 使用 `clash-party` 条目；两者的上游默认 NixOS module 均由 MNPR 转发并通过 `thirdPartyNixosModules` 统一引入。Spark Store 使用 MNPR 的 `spark-store` 条目；上游仓库不是 Flake，由 MNPR 适配层调用其 `nix/package.nix`，并注入同属 MNPR 的 Amber PM 包。
-- Codex Desktop 使用 MNPR 的 `codex-desktop` 条目，该条目追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 MNPR 及 `flake.lock` 锁定实际版本。
+- 所有不在 nixpkgs 的第三方软件包都通过 overlay 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。
+- 第三方软件自身提供 Flake 时，优先直接使用来源 Flake 的 outputs 及其锁定包集；不得为这类 input 设置 `inputs.nixpkgs.follows = "nixpkgs"`。
+- 第三方 Flake source 统一通过 `flake.nix` 输出函数的 `inputs` 属性集访问；包的 overlay 定义也集中在该文件。需要使用时由对应模块接收单一的 `pkgs-thirdParty` 参数。
+- MNPR 作为独立 Flake input 提供选择性缓存模块；通过 `inputs.mnpr.nixosModules.caches` 引入，并在系统软件模块中按条目名称启用所需缓存。MNPR input 不设置 `nixpkgs.follows`。
+- Amber PM 使用 `Melorise/amber-pm` 的 `nixos` 分支，Clash Party 使用 `Melorise/cp-nix`；两者均直接使用来源 Flake 自身的 package、NixOS module 和锁定包集，并通过 `thirdPartyNixosModules` 统一引入模块。Spark Store 使用 `Melorise/spark-store` 的 `nixos` 分支，但仓库本身不是 Flake，因此作为普通源码 input 并通过 `nix/package.nix` 构建。
+- Codex Desktop 来源追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机更新到已构建并写入 Cachix 的提交；本仓库通过 `flake.lock` 锁定实际版本。
 - Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages.nix` 只按条目名称选择启用。Codex Desktop 与 Clash Party 均通过 `pkgs-thirdParty` 提供；Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过其 NixOS module 在 `modules/packages.nix` 中启用。
 
 ## 软件与配置的放置规则
@@ -126,7 +126,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与 MNPR 输入。MNPR 的全部软件包通过可扩展的 `thirdPartyOverlays` 加入 `pkgs-thirdParty`；MNPR 转发且本配置实际使用的默认 NixOS module 通过 `thirdPartyNixosModules` 统一引入，缓存模块单独引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、MNPR 与第三方 Flake 输入，并生成 `pkgs-thirdParty` 包集。MNPR 提供选择性缓存模块；提供默认 NixOS module 的第三方软件输入通过 `thirdPartyNixosModules` 统一引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。

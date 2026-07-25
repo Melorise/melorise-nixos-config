@@ -18,6 +18,24 @@
     };
 
     mnpr.url = "github:Melorise/MNPR/unstable";
+
+    codex-desktop-linux-builder.url =
+      "github:Melorise/codex-desktop-linux-builder/nix";
+
+    cp-nix = {
+      url = "github:Melorise/cp-nix";
+    };
+
+    # Amber PM 本身提供 Flake package 与 NixOS module。
+    amber-pm = {
+      url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
+    };
+
+    # Spark Store 尚未提供 Flake outputs，仅将远程仓库作为固定源码输入。
+    spark-store-src = {
+      url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
+      flake = false;
+    };
   };
 
 
@@ -28,23 +46,37 @@
         inherit system;
         config.allowUnfree = true;
       };
-      thirdPartyOverlays = [
-        (_final: _prev:
-          inputs.mnpr.packages.${system}
-        )
-      ];
       pkgs-thirdParty = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = thirdPartyOverlays;
+        overlays = [
+          (final: _prev: {
+            codex-desktop =
+              inputs.codex-desktop-linux-builder.packages.${system}.codex-desktop;
+
+            clash-party =
+              inputs.cp-nix.packages.${system}.clash-party;
+
+            amber-pm =
+              inputs.amber-pm.packages.${system}.amber-pm;
+
+            # Spark Store 不是 Flake，直接从源码 input 调用其 Nix 包表达式。
+            spark-store =
+              final.callPackage
+                "${inputs.spark-store-src}/nix/package.nix"
+                {
+                  apm = final.amber-pm;
+                };
+          })
+        ];
       };
 
       thirdPartyNixosModules =
         map
-          (name: inputs.mnpr.nixosModules.${name})
+          (name: inputs.${name}.nixosModules.default)
           [
             "amber-pm"
-            "clash-party"
+            "cp-nix"
           ];
 
       mkHost = hostModule:
