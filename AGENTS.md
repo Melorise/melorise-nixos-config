@@ -26,10 +26,10 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 ├── README.md                         项目简介与常用维护命令
 ├── hosts/
 │   ├── desktop/
-│   │   ├── default.nix               台式机设备配置与 GRUB 设置
+│   │   ├── default.nix               台式机设备配置、Nix 信任用户与 GRUB 设置
 │   │   └── hardware-configuration.nix 台式机硬件/磁盘生成配置
 │   └── asus/
-│       ├── default.nix               华硕设备配置与 GRUB/Windows 探测设置
+│       ├── default.nix               华硕设备配置、Nix 信任用户与 GRUB/Windows 探测设置
 │       └── hardware-configuration.nix 华硕硬件/磁盘生成配置
 ├── modules/
 │   ├── audio.nix                     系统级 PipeWire 音频配置
@@ -134,9 +134,9 @@ programs.clash-verge = {
 
 ### `hosts/`
 
-- `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式，并导入通用系统模块。
+- `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式、Nix 实验性功能，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块。
 - `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名和 UEFI GRUB，启用 Windows 启动项探测，并导入通用系统模块。
+- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块。
 - `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
 
 ### `modules/`

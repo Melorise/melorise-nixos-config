@@ -30,10 +30,17 @@
     ../../modules/spark-store.nix
   ];
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+
+    trusted-users = [
+      "root"
+      "tippy"
+    ];
+  };
 
   system.stateVersion = "26.05";
 }
