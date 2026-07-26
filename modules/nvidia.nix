@@ -1,7 +1,18 @@
-{ config, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.stable;
+in
 {
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver = {
+    videoDrivers = [ "nvidia" ];
+
+    # Let Xorg select the display GPU from the active DRM connectors instead of
+    # generating a static Device/Screen layout for either MUX mode.
+    drivers = lib.mkForce [ ];
+    externallyConfiguredDrivers = [ "nvidia" ];
+    modules = [ nvidiaPackage.bin ];
+  };
 
   hardware.graphics.enable = true;
 
@@ -9,19 +20,30 @@
     modesetting.enable = true;
     powerManagement = {
       enable = true;
-      finegrained = true;
+      finegrained = false;
     };
     open = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = nvidiaPackage;
+  };
 
-    prime = {
-      amdgpuBusId = "PCI:6:0:0";
-      nvidiaBusId = "PCI:1:0:0";
-      offload = {
-        enable = true;
-        enableOffloadCmd = true;
-      };
-    };
+  environment = {
+    etc."X11/xorg.conf.d/10-nvidia-autoconfig.conf".text = ''
+      Section "OutputClass"
+        Identifier "NVIDIA auto configuration"
+        MatchDriver "nvidia-drm"
+        Driver "nvidia"
+        Option "AllowEmptyInitialConfiguration"
+      EndSection
+    '';
+
+    systemPackages = [
+      (pkgs.writeShellScriptBin "nvidia-offload" ''
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
+        exec "$@"
+      '')
+    ];
   };
 }

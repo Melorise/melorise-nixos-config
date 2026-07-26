@@ -39,7 +39,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── gc.nix                        系统世代保留数量配置
 │   ├── locale.nix                    系统级中文 locale 和 Fcitx5 配置
 │   ├── networking.nix                系统级网络与本地 DNS 配置
-│   ├── nvidia.nix                    ASUS 混合显卡与 NVIDIA PRIME 配置
+│   ├── nvidia.nix                    ASUS NVIDIA 驱动与 X11 自动选卡配置
 │   ├── packages.nix                  系统级软件及其 NixOS 配置
 │   ├── spark-store.nix               Amber PM 与 Spark Store 系统级集成
 │   └── users-tippy.nix               系统级 tippy 用户配置
@@ -148,7 +148,7 @@ programs.clash-verge = {
 - `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 - `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
-- `modules/nvidia.nix`：ASUS 设备的 AMD 核显与 NVIDIA 独显配置，启用 NVIDIA 驱动、电源管理和 PRIME offload。
+- `modules/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
