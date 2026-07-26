@@ -35,6 +35,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── hardware/                     硬件与底层系统资源配置
 │   │   ├── audio.nix                 PipeWire 音频配置
 │   │   ├── filesystems.nix           文件系统与 UDisks 配置
+│   │   ├── gc.nix                    系统世代保留数量配置
 │   │   ├── networking.nix            网络与本地 DNS 配置
 │   │   ├── nvidia.nix                ASUS NVIDIA 显卡配置
 │   │   └── zram.nix                  zram 压缩交换空间配置
@@ -47,9 +48,8 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
 │   ├── users/
 │   │   └── tippy.nix                 tippy 系统用户配置
-│   └── configs/                      其他系统级配置
-│       ├── docker.nix                Docker 与 Docker Compose 环境
-│       └── gc.nix                    系统世代保留数量配置
+│   └── development/                  系统级开发环境配置
+│       └── docker.nix                Docker 与 Docker Compose 环境
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
     ├── development/                  开发相关软件与配置
@@ -151,6 +151,7 @@ programs.clash-verge = {
 - `modules/hardware/`：硬件与底层系统资源配置目录。
 - `modules/hardware/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
 - `modules/hardware/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
+- `modules/hardware/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 - `modules/hardware/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
 - `modules/hardware/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
 - `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
@@ -163,9 +164,8 @@ programs.clash-verge = {
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
-- `modules/configs/`：其他系统级配置目录。
-- `modules/configs/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
-- `modules/configs/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
+- `modules/development/`：系统级开发环境配置目录。
+- `modules/development/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
 
 ### `home/tippy/`
 

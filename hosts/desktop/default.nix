@@ -17,8 +17,8 @@
     ../../modules/desktops/cinnamon.nix
     ../../modules/hardware/audio.nix
     ../../modules/hardware/filesystems.nix
-    ../../modules/configs/docker.nix
-    ../../modules/configs/gc.nix
+    ../../modules/development/docker.nix
+    ../../modules/hardware/gc.nix
     ../../modules/hardware/zram.nix
     ../../modules/users/tippy.nix
     ../../modules/packages/default.nix
