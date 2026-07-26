@@ -25,6 +25,7 @@
     ../../modules/filesystems.nix
     ../../modules/docker.nix
     ../../modules/gc.nix
+    ../../modules/zram.nix
     ../../modules/nvidia.nix
     ../../modules/users-tippy.nix
     ../../modules/packages.nix

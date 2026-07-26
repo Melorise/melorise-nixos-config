@@ -43,7 +43,8 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── nvidia.nix                    ASUS NVIDIA 驱动与 X11 自动选卡配置
 │   ├── packages.nix                  系统级软件及其 NixOS 配置
 │   ├── spark-store.nix               Amber PM 与 Spark Store 系统级集成
-│   └── users-tippy.nix               系统级 tippy 用户配置
+│   ├── users-tippy.nix               系统级 tippy 用户配置
+│   └── zram.nix                      系统级 zram 压缩交换空间配置
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
     ├── development/                  开发相关软件与配置
@@ -154,6 +155,7 @@ programs.clash-verge = {
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
+- `modules/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
 
 ### `home/tippy/`
 
