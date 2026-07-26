@@ -23,6 +23,7 @@
     ../../modules/desktop-cinnamon.nix
     ../../modules/audio.nix
     ../../modules/filesystems.nix
+    ../../modules/docker.nix
     ../../modules/gc.nix
     ../../modules/nvidia.nix
     ../../modules/users-tippy.nix

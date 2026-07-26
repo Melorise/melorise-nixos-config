@@ -34,6 +34,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 ├── modules/
 │   ├── audio.nix                     系统级 PipeWire 音频配置
 │   ├── desktop-cinnamon.nix          系统级 Cinnamon 桌面配置
+│   ├── docker.nix                    系统级 Docker 与 Docker Compose 环境
 │   ├── filesystems.nix                系统级文件系统工具与 UDisks 挂载驱动配置
 │   ├── fonts.nix                     系统级中文默认字体与字体包配置
 │   ├── gc.nix                        系统世代保留数量配置
@@ -143,6 +144,7 @@ programs.clash-verge = {
 
 - `modules/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
 - `modules/desktop-cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
+- `modules/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
 - `modules/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
 - `modules/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
 - `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
@@ -151,7 +153,7 @@ programs.clash-verge = {
 - `modules/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
 - `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
 - `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
-- `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `networkmanager`、`wheel` 用户组。
+- `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 
 ### `home/tippy/`
 

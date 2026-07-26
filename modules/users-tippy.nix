@@ -5,6 +5,6 @@
   users.users."tippy" = {
     isNormalUser = true;
     description = "tippy";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "docker" "networkmanager" "wheel" ];
   };
 }
