@@ -17,19 +17,19 @@
   imports = [
     ./hardware-configuration.nix
 
-    ../../modules/networking.nix
-    ../../modules/locale.nix
-    ../../modules/fonts.nix
-    ../../modules/desktop-cinnamon.nix
-    ../../modules/audio.nix
-    ../../modules/filesystems.nix
-    ../../modules/docker.nix
-    ../../modules/gc.nix
-    ../../modules/zram.nix
-    ../../modules/nvidia.nix
-    ../../modules/users-tippy.nix
-    ../../modules/packages.nix
-    ../../modules/spark-store.nix
+    ../../modules/hardware/networking.nix
+    ../../modules/desktops/locale.nix
+    ../../modules/desktops/fonts.nix
+    ../../modules/desktops/cinnamon.nix
+    ../../modules/hardware/audio.nix
+    ../../modules/hardware/filesystems.nix
+    ../../modules/configs/docker.nix
+    ../../modules/configs/gc.nix
+    ../../modules/hardware/zram.nix
+    ../../modules/hardware/nvidia.nix
+    ../../modules/users/tippy.nix
+    ../../modules/packages/default.nix
+    ../../modules/packages/spark-store.nix
   ];
 
   nix.settings = {

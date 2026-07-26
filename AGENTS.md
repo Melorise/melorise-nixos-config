@@ -32,19 +32,24 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │       ├── default.nix               华硕设备配置、Nix 信任用户与 GRUB/Windows 探测设置
 │       └── hardware-configuration.nix 华硕硬件/磁盘生成配置
 ├── modules/
-│   ├── audio.nix                     系统级 PipeWire 音频配置
-│   ├── desktop-cinnamon.nix          系统级 Cinnamon 桌面配置
-│   ├── docker.nix                    系统级 Docker 与 Docker Compose 环境
-│   ├── filesystems.nix                系统级文件系统工具与 UDisks 挂载驱动配置
-│   ├── fonts.nix                     系统级中文默认字体与字体包配置
-│   ├── gc.nix                        系统世代保留数量配置
-│   ├── locale.nix                    系统级中文 locale 和 Fcitx5 配置
-│   ├── networking.nix                系统级网络与本地 DNS 配置
-│   ├── nvidia.nix                    ASUS NVIDIA 驱动与 X11 自动选卡配置
-│   ├── packages.nix                  系统级软件及其 NixOS 配置
-│   ├── spark-store.nix               Amber PM 与 Spark Store 系统级集成
-│   ├── users-tippy.nix               系统级 tippy 用户配置
-│   └── zram.nix                      系统级 zram 压缩交换空间配置
+│   ├── hardware/                     硬件与底层系统资源配置
+│   │   ├── audio.nix                 PipeWire 音频配置
+│   │   ├── filesystems.nix           文件系统与 UDisks 配置
+│   │   ├── networking.nix            网络与本地 DNS 配置
+│   │   ├── nvidia.nix                ASUS NVIDIA 显卡配置
+│   │   └── zram.nix                  zram 压缩交换空间配置
+│   ├── desktops/                     桌面环境与本地化配置
+│   │   ├── cinnamon.nix              Cinnamon 桌面配置
+│   │   ├── fonts.nix                 中文默认字体配置
+│   │   └── locale.nix                中文 locale 与输入法配置
+│   ├── packages/                     系统级软件及其集成配置
+│   │   ├── default.nix               通用系统软件配置
+│   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
+│   ├── users/
+│   │   └── tippy.nix                 tippy 系统用户配置
+│   └── configs/                      其他系统级配置
+│       ├── docker.nix                Docker 与 Docker Compose 环境
+│       └── gc.nix                    系统世代保留数量配置
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
     ├── development/                  开发相关软件与配置
@@ -64,7 +69,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - `home/tippy/` 是 Home Manager 用户级配置。
 - 绝大部分用户态软件应安装在 Home Manager。
 - 系统级仅安装少量通用软件，或必须依赖系统服务、系统权限、网络/TUN、桌面服务等 NixOS 配置的软件。
-- 新增用户态软件时，优先放入 `home/tippy/`；不要因为方便而直接添加到 `modules/packages.nix`。
+- 新增用户态软件时，优先放入 `home/tippy/`；不要因为方便而直接添加到 `modules/packages/default.nix`。
 
 ## 包集与第三方来源
 
@@ -75,7 +80,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - MNPR 转发的默认 NixOS module 通过 `thirdPartyNixosModules` 按条目名称统一聚合；只加入本配置实际使用的模块，避免 MNPR 后续新增模块时被自动启用。选择性缓存模块通过 `inputs.mnpr.nixosModules.caches` 单独引入，并在系统软件模块中按条目名称启用所需缓存。
 - Amber PM 使用 MNPR 的 `amber-pm` 条目，Clash Party 使用 `clash-party` 条目；两者的上游默认 NixOS module 均由 MNPR 转发并通过 `thirdPartyNixosModules` 统一引入。Spark Store 使用 MNPR 的 `spark-store` 条目；上游仓库不是 Flake，由 MNPR 适配层调用其 `nix/package.nix`，并注入同属 MNPR 的 Amber PM 包。
 - Codex Desktop 使用 MNPR 的 `codex-desktop` 条目，该条目追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机在成功上传对应闭包后推进；本仓库通过 MNPR 及 `flake.lock` 锁定实际版本。
-- Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages.nix` 只按条目名称选择启用。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过 MNPR 转发的上游 NixOS module 在 `modules/packages.nix` 中启用。
+- Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages/default.nix` 只按条目名称选择启用。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过 MNPR 转发的上游 NixOS module 在 `modules/packages/default.nix` 中启用。
 
 ## 软件与配置的放置规则
 
@@ -143,19 +148,24 @@ programs.clash-verge = {
 
 ### `modules/`
 
-- `modules/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
-- `modules/desktop-cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
-- `modules/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
-- `modules/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
-- `modules/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
-- `modules/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
-- `modules/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
-- `modules/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
-- `modules/packages.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party、少量基础工具及既有的 Chrome 配置。新增普通用户态软件不应默认放在这里。
-- `modules/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
-- `modules/users-tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
-- `modules/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
+- `modules/hardware/`：硬件与底层系统资源配置目录。
+- `modules/hardware/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
+- `modules/hardware/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
+- `modules/hardware/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析，GitHub 域名使用每小时自动更新的 GitHub520 hosts 订阅。
+- `modules/hardware/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
+- `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
+- `modules/desktops/`：桌面环境、字体与本地化配置目录。
+- `modules/desktops/cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
+- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
+- `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
+- `modules/packages/`：系统级软件及其集成配置目录。
+- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
+- `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
+- `modules/users/`：系统用户配置目录。
+- `modules/users/tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
+- `modules/configs/`：其他系统级配置目录。
+- `modules/configs/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
+- `modules/configs/gc.nix`：限制 GRUB 最多保留 10 个可启动的系统世代。
 
 ### `home/tippy/`
 
