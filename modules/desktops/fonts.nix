@@ -1,13 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-thirdParty, ... }:
 
 {
   fonts = {
-    packages = with pkgs; [
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
-      noto-fonts-color-emoji
+    packages = [
+      pkgs.noto-fonts-cjk-sans
+      pkgs.noto-fonts-cjk-serif
+      pkgs.noto-fonts-color-emoji
+      pkgs-thirdParty.spark-winfonts
     ];
 
+    # Keep generic font families pinned so installing additional fonts does not
+    # change the system UI or terminal font selection.
     fontconfig.defaultFonts = {
       sansSerif = [ "Noto Sans CJK SC" ];
       serif = [ "Noto Serif CJK SC" ];

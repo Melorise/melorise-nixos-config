@@ -41,7 +41,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── zram.nix                  zram 压缩交换空间配置
 │   ├── desktops/                     桌面环境与本地化配置
 │   │   ├── cinnamon.nix              Cinnamon 桌面配置
-│   │   ├── fonts.nix                 中文默认字体配置
+│   │   ├── fonts.nix                 系统字体安装与默认字体配置
 │   │   └── locale.nix                中文 locale 与输入法配置
 │   ├── packages/                     系统级软件及其集成配置
 │   │   ├── default.nix               通用系统软件配置
@@ -79,6 +79,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - MNPR 保留各上游自身的锁定输入图，不设置 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写转发的软件包，以保持上游缓存命中。
 - MNPR 转发的默认 NixOS module 通过 `thirdPartyNixosModules` 按条目名称统一聚合；只加入本配置实际使用的模块，避免 MNPR 后续新增模块时被自动启用。选择性缓存模块通过 `inputs.mnpr.nixosModules.caches` 单独引入，并在系统软件模块中按条目名称启用所需缓存。
 - Amber PM 使用 MNPR 的 `amber-pm` 条目，Clash Party 使用 `clash-party` 条目；两者的上游默认 NixOS module 均由 MNPR 转发并通过 `thirdPartyNixosModules` 统一引入。Spark Store 使用 MNPR 的 `spark-store` 条目；上游仓库不是 Flake，由 MNPR 适配层调用其 `nix/package.nix`，并注入同属 MNPR 的 Amber PM 包。
+- Spark Winfonts 使用 MNPR 的 `spark-winfonts` 条目，通过 `pkgs-thirdParty` 直接安装字体包，不引入上游 NixOS module；默认字体族继续由本地字体模块显式固定。
 - Codex Desktop 使用 MNPR 的 `codex-desktop` 条目，该条目追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机在成功上传对应闭包后推进；本仓库通过 MNPR 及 `flake.lock` 锁定实际版本。
 - Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages/default.nix` 只按条目名称选择启用。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过 MNPR 转发的上游 NixOS module 在 `modules/packages/default.nix` 中启用。
 
@@ -157,7 +158,7 @@ programs.clash-verge = {
 - `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
 - `modules/desktops/`：桌面环境、字体与本地化配置目录。
 - `modules/desktops/cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体和彩色 Emoji 字体，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值。
+- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体及 MNPR 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
 - `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
