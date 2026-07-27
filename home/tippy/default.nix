@@ -8,6 +8,7 @@
   
 
   imports = [
+    ./config/zsh.nix
     ./development/ssh.nix
     ./development/git.nix
     ./development/nodejs.nix

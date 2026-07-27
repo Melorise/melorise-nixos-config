@@ -52,6 +52,8 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │       └── docker.nix                Docker 与 Docker Compose 环境
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
+    ├── config/                       用户级基础环境配置
+    │   └── zsh.nix                   Zsh、命令补全与 Powerlevel10k 配置
     ├── development/                  开发相关软件与配置
     │   ├── ai-agent.nix              AI agent 类用户软件
     │   ├── git.nix                   Git 用户配置
@@ -115,18 +117,20 @@ programs.clash-verge = {
 
 ### Home Manager 的分类优先级
 
-用户态软件先判断是否与开发相关。开发相关的软件与配置放入 `home/tippy/development/`；日常软件和其他普通软件放入 `home/tippy/packages/`。
+用户级基础环境配置放入 `home/tippy/config/`；用户态软件先判断是否与开发相关。开发相关的软件与配置放入 `home/tippy/development/`；日常软件和其他普通软件放入 `home/tippy/packages/`。
 
 分类顺序如下：
 
-1. 开发相关的软件与配置放入 `development/` 下的对应专用文件。
+1. Shell 等用户级基础环境配置放入 `config/` 下的对应专用文件。
+   - Zsh、命令补全与 Powerlevel10k 配置放入 `config/zsh.nix`。
+2. 开发相关的软件与配置放入 `development/` 下的对应专用文件。
    - AI agent 相关软件放入 `development/ai-agent.nix`。
    - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
    - Python 解释器及相关环境配置放入 `development/python.nix`。
    - Git 配置放入 `development/git.nix`。
    - SSH 配置放入 `development/ssh.nix`。
    - 后续出现新的开发类别时，应在 `development/` 下新建语义清晰的专用文件，并在 `home/tippy/default.nix` 中导入。
-2. 日常软件和其他普通软件放入 `packages/`，继续按更新频率选择文件：
+3. 日常软件和其他普通软件放入 `packages/`，继续按更新频率选择文件：
    - `packages/packages-unstable.nix`：更新频繁、无需刻意控制版本的软件，例如 Chrome。
    - `packages/packages.nix`：时效性不强、可以数月不更新的软件，例如 `ripgrep`、`fd`、`htop`。
 
@@ -158,19 +162,21 @@ programs.clash-verge = {
 - `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
 - `modules/desktops/`：桌面环境、字体与本地化配置目录。
 - `modules/desktops/cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体及 MNPR 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
+- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 MNPR 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
 - `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
-- `modules/users/tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
+- `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 - `modules/server/`：系统级服务配置目录。
 - `modules/server/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
 
 ### `home/tippy/`
 
-- `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入所有用户级分类配置。
+- `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入基础环境、开发与普通软件等用户级分类配置。
+- `home/tippy/config/`：用户级基础环境配置目录。
+- `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
 - `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，Codex Desktop 使用 `pkgs-thirdParty`；同时通过用户级 desktop entry 仅为 Codex Desktop 设置 XIM，以绕过其内置旧版 GLib 与系统 `fcitx5-gtk` 的兼容问题并保持 Cachix 原包命中。后续同类软件均放在这里。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。

@@ -6,6 +6,7 @@
       pkgs.noto-fonts-cjk-sans
       pkgs.noto-fonts-cjk-serif
       pkgs.noto-fonts-color-emoji
+      pkgs.nerd-fonts.meslo-lg
       pkgs-thirdParty.spark-winfonts
     ];
 
