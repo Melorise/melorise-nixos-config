@@ -48,7 +48,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
 │   ├── users/
 │   │   └── tippy.nix                 tippy 系统用户配置
-│   └── development/                  系统级开发环境配置
+│   └── server/                       系统级服务配置
 │       └── docker.nix                Docker 与 Docker Compose 环境
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
@@ -165,8 +165,8 @@ programs.clash-verge = {
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户和 `docker`、`networkmanager`、`wheel` 用户组；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
-- `modules/development/`：系统级开发环境配置目录。
-- `modules/development/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
+- `modules/server/`：系统级服务配置目录。
+- `modules/server/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
 
 ### `home/tippy/`
 
