@@ -176,7 +176,7 @@ programs.clash-verge = {
 
 - `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入基础环境、开发与普通软件等用户级分类配置。
 - `home/tippy/config/`：用户级基础环境配置目录。
-- `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
+- `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全、语法高亮和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
 - `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，Codex Desktop 使用 `pkgs-thirdParty`；同时通过用户级 desktop entry 仅为 Codex Desktop 设置 XIM，以绕过其内置旧版 GLib 与系统 `fcitx5-gtk` 的兼容问题并保持 Cachix 原包命中。后续同类软件均放在这里。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
