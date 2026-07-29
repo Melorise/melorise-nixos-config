@@ -158,7 +158,7 @@ programs.clash-verge = {
 - `modules/hardware/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
 - `modules/hardware/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
 - `modules/hardware/gc.nix`：每周自动执行 Nix 垃圾回收并删除 14 天前的旧世代，不限制 GRUB 启动项数量。
-- `modules/hardware/networking.nix`：启用无线网络支持和 NetworkManager，并让仅监听本机的 AdGuard Home 接管系统 DNS；普通查询通过阿里与 DNSPod 的 DoH 上游解析。
+- `modules/hardware/networking.nix`：启用无线网络支持和 NetworkManager，并由 NetworkManager 管理系统 DNS。
 - `modules/hardware/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
 - `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
 - `modules/desktops/`：桌面环境、字体与本地化配置目录。
