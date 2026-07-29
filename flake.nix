@@ -19,7 +19,7 @@
 
     mnpr.url = "github:Melorise/MNPR/unstable";
 
-    npanel.url = "path:/home/tippy/Dev/1Panel/nPanel";
+    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.0";
   };
 
 
