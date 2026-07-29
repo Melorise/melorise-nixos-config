@@ -18,6 +18,8 @@
     };
 
     mnpr.url = "github:Melorise/MNPR/unstable";
+
+    npanel.url = "path:/home/tippy/Dev/1Panel/nPanel";
   };
 
 
@@ -51,7 +53,7 @@
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit pkgs-unstable pkgs-thirdParty; };
+          specialArgs = { inherit inputs pkgs-unstable pkgs-thirdParty; };
 
           modules =
             [

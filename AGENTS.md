@@ -19,7 +19,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义包集、MNPR、第三方 overlay 和两台设备输出
+├── flake.nix                         Flake 入口；定义包集、MNPR、本地 nPanel 测试输入、第三方 overlay 和两台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -49,7 +49,8 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── users/
 │   │   └── tippy.nix                 tippy 系统用户配置
 │   └── server/                       系统级服务配置
-│       └── docker.nix                Docker 与 Docker Compose 环境
+│       ├── docker.nix                Docker 与 Docker Compose 环境
+│       └── npanel.nix                ASUS 本地 nPanel 测试服务
 └── home/tippy/
     ├── default.nix                   Home Manager 用户配置入口
     ├── config/                       用户级基础环境配置
@@ -138,7 +139,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager 与 MNPR 输入。MNPR 的全部软件包通过可扩展的 `thirdPartyOverlays` 加入 `pkgs-thirdParty`；MNPR 转发且本配置实际使用的默认 NixOS module 通过 `thirdPartyNixosModules` 统一引入，缓存模块单独引入。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、MNPR 与本地 nPanel 测试输入。MNPR 的全部软件包通过可扩展的 `thirdPartyOverlays` 加入 `pkgs-thirdParty`；MNPR 转发且本配置实际使用的默认 NixOS module 通过 `thirdPartyNixosModules` 统一引入，缓存模块单独引入。nPanel 的 NixOS module 由本地路径 `/home/tippy/Dev/1Panel/nPanel` 提供，并通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -148,7 +149,7 @@ programs.clash-verge = {
 
 - `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式、Nix 实验性功能，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块。
 - `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块。
+- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块及本地 nPanel 测试服务。
 - `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
 
 ### `modules/`
@@ -171,6 +172,7 @@ programs.clash-verge = {
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 - `modules/server/`：系统级服务配置目录。
 - `modules/server/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
+- `modules/server/npanel.nix`：仅由 ASUS 主机导入并启用本地 Flake `/home/tippy/Dev/1Panel/nPanel` 提供的 nPanel 服务；服务默认使用端口 9999、`/var/lib/npanel` 状态目录和 `/run/npanel` 运行时目录，首次启动会在状态目录写入一次性管理员密码。
 
 ### `home/tippy/`
 
