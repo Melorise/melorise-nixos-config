@@ -2,12 +2,6 @@
 
 {
 
-  nix.settings = {
-    substituters = [
-      "https://mirrors.cernet.edu.cn/nix-channels/store"
-    ];
-  };
-
   nixpkgs.config.allowUnfree = true;
   
   #firefox

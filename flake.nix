@@ -2,6 +2,9 @@
   description = "tippy nixos";
 
   nixConfig = {
+    substituters = [
+      "https://mirrors.cernet.edu.cn/nix-channels/store"
+    ];
     extra-substituters = [
       "https://melorise-cp-nix.cachix.org"
       "https://melorise-codex-desktop.cachix.org"
@@ -57,6 +60,9 @@
           publicKey = "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U=";
         };
       };
+      nixpkgsSubstituters = [
+        "https://mirrors.cernet.edu.cn/nix-channels/store"
+      ];
       cacheEntries = builtins.attrValues thirdPartyCaches;
       cacheSubstituters = map (cache: cache.substituter) cacheEntries;
       cachePublicKeys = map (cache: cache.publicKey) cacheEntries;
@@ -93,7 +99,8 @@
 
       thirdPartyCacheModule = {
         nix.settings = {
-          substituters = cacheSubstituters;
+          substituters = nixpkgsSubstituters;
+          extra-substituters = cacheSubstituters;
           trusted-public-keys = cachePublicKeys;
         };
       };
