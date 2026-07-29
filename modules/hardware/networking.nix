@@ -44,20 +44,6 @@
         ];
       };
 
-      filtering = {
-        protection_enabled = true;
-        filtering_enabled = true;
-        filters_update_interval = 1;
-      };
-
-      filters = [
-        {
-          enabled = true;
-          url = "https://raw.hellogithub.com/hosts";
-          name = "GitHub520 Hosts";
-          id = 1;
-        }
-      ];
     };
   };
 }
