@@ -1,5 +1,25 @@
+let
+  thirdPartyCaches = {
+    clash-party = {
+      substituter = "https://melorise-cp-nix.cachix.org";
+      publicKey = "melorise-cp-nix.cachix.org-1:GNg96VizkktTdGMrvl6+PLPHY3jPce4a72HqP2cj4S4=";
+    };
+    codex-desktop = {
+      substituter = "https://melorise-codex-desktop.cachix.org";
+      publicKey = "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U=";
+    };
+  };
+  cacheEntries = builtins.attrValues thirdPartyCaches;
+  cacheSubstituters = map (cache: cache.substituter) cacheEntries;
+  cachePublicKeys = map (cache: cache.publicKey) cacheEntries;
+in
 {
   description = "tippy nixos";
+
+  nixConfig = {
+    extra-substituters = cacheSubstituters;
+    extra-trusted-public-keys = cachePublicKeys;
+  };
 
   inputs = {
     nixpkgs.url =
@@ -17,9 +37,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mnpr.url = "github:Melorise/MNPR/unstable";
+    amber-pm.url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
 
-    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.0";
+    clash-party.url = "git+https://github.com/Melorise/cp-nix.git?ref=main";
+
+    codex-desktop.url = "git+https://github.com/Melorise/codex-desktop-linux-builder.git?ref=nix";
+
+    spark-store = {
+      url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
+      flake = false;
+    };
+
+    spark-winfonts.url = "git+https://github.com/Melorise/spark-winfonts-for-nixos.git?ref=main";
+
+    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.1";
   };
 
 
@@ -31,9 +62,19 @@
         config.allowUnfree = true;
       };
       thirdPartyOverlays = [
-        (_final: _prev:
-          inputs.mnpr.packages.${system}
-        )
+        inputs.amber-pm.overlays.default
+        inputs.spark-winfonts.overlays.default
+        (_final: _prev: {
+          clash-party = inputs.clash-party.packages.${system}.clash-party;
+        })
+        (_final: _prev: {
+          codex-desktop = inputs.codex-desktop.packages.${system}.codex-desktop;
+        })
+        (final: _prev: {
+          spark-store = final.callPackage "${inputs.spark-store}/nix/package.nix" {
+            apm = final.amber-pm;
+          };
+        })
       ];
       pkgs-thirdParty = import nixpkgs {
         inherit system;
@@ -41,13 +82,17 @@
         overlays = thirdPartyOverlays;
       };
 
-      thirdPartyNixosModules =
-        map
-          (name: inputs.mnpr.nixosModules.${name})
-          [
-            "amber-pm"
-            "clash-party"
-          ];
+      thirdPartyNixosModules = [
+        inputs.amber-pm.nixosModules.default
+        inputs.clash-party.nixosModules.clash-party
+      ];
+
+      thirdPartyCacheModule = {
+        nix.settings = {
+          substituters = cacheSubstituters;
+          trusted-public-keys = cachePublicKeys;
+        };
+      };
 
       mkHost = hostModule:
         nixpkgs.lib.nixosSystem {
@@ -58,7 +103,7 @@
           modules =
             [
               hostModule
-              inputs.mnpr.nixosModules.caches
+              thirdPartyCacheModule
             ]
             ++ thirdPartyNixosModules
             ++ [

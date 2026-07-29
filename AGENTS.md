@@ -9,6 +9,10 @@
 
 你只允许改动文件本身。绝对禁止自行执行nix flake lock, nix flake update, nixos-rebuild等任何指令。  
 
+`flake.lock` 是由 Nix 自动生成的锁定文件，绝对禁止手工编辑、替换、重排或以任何方式修改。禁止执行 `nix flake lock`、`nix flake update` 等命令，不构成手工修改 `flake.lock` 的许可；配置源码与 `flake.lock` 必须作为独立 Git 改动处理，锁文件只由用户自行执行 Nix 命令生成。
+
+不论提交什么，`flake.lock` 一律直接排除，不得读取、检查、验证、暂存或修改它。禁止以“事务闭合”、输入图一致性、版本配套或任何类似理由对该文件进行手工操作；一旦发现当前任务中的 agent 已手工改动该文件，立即停止全部相关操作，并询问用户应如何处理。用户自行执行 Nix 命令后留下的未提交锁文件改动不属于此情形，必须原样保留。
+
 每次更改，提交git commit,但不要推送到远程。  
 
 如果有内容变化或文件新增，更新AGENTS.md并拷贝一份到CLAUDE.md。   
@@ -19,7 +23,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义包集、MNPR、nPanel GitHub 输入、第三方 overlay 和两台设备输出
+├── flake.nix                         Flake 入口；定义包集、第三方上游与 nPanel 输入、缓存、第三方聚合和两台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -78,13 +82,11 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- MNPR 是当前第三方软件的统一 Flake input。本仓库通过通用 overlay 将 `inputs.mnpr.packages.${system}` 的全部软件包加入 `pkgs-thirdParty`，不在本地逐个映射包名；各模块只接收单一的 `pkgs-thirdParty` 参数。
-- MNPR 保留各上游自身的锁定输入图，不设置 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写转发的软件包，以保持上游缓存命中。
-- MNPR 转发的默认 NixOS module 通过 `thirdPartyNixosModules` 按条目名称统一聚合；只加入本配置实际使用的模块，避免 MNPR 后续新增模块时被自动启用。选择性缓存模块通过 `inputs.mnpr.nixosModules.caches` 单独引入，并在系统软件模块中按条目名称启用所需缓存。
-- Amber PM 使用 MNPR 的 `amber-pm` 条目，Clash Party 使用 `clash-party` 条目；两者的上游默认 NixOS module 均由 MNPR 转发并通过 `thirdPartyNixosModules` 统一引入。Spark Store 使用 MNPR 的 `spark-store` 条目；上游仓库不是 Flake，由 MNPR 适配层调用其 `nix/package.nix`，并注入同属 MNPR 的 Amber PM 包。
-- Spark Winfonts 使用 MNPR 的 `spark-winfonts` 条目，通过 `pkgs-thirdParty` 直接安装字体包，不引入上游 NixOS module；默认字体族继续由本地字体模块显式固定。
-- Codex Desktop 使用 MNPR 的 `codex-desktop` 条目，该条目追踪 `Melorise/codex-desktop-linux-builder` 的 `nix` 分支。该分支由构建机在成功上传对应闭包后推进；本仓库通过 MNPR 及 `flake.lock` 锁定实际版本。
-- Codex Desktop 与 Clash Party 的 Cachix URL 和公钥由 MNPR 条目维护，`modules/packages/default.nix` 只按条目名称选择启用。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 通过 MNPR 转发的上游 NixOS module 在 `modules/packages/default.nix` 中启用。
+- Amber PM、Clash Party、Codex Desktop、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。
+- 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
+- 实际使用的上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合：Amber PM 使用 `nixosModules.default`，Clash Party 使用 `nixosModules.clash-party`。只加入本配置实际使用的模块。
+- Clash Party 与 Codex Desktop 的 Cachix URL 和公钥在 `flake.nix` 顶层集中声明；同一份清单同时生成顶层 `nixConfig` 和 NixOS 的 `nix.settings`，使构建待切换世代时可使用缓存，并在切换后持久配置 Nix daemon。顶层 Flake 配置须由调用方接受后才会在构建阶段生效。
+- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 的 NixOS module 在 `modules/packages/default.nix` 中启用。
 
 ## 软件与配置的放置规则
 
@@ -139,7 +141,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、MNPR 与 nPanel GitHub 输入。MNPR 的全部软件包通过可扩展的 `thirdPartyOverlays` 加入 `pkgs-thirdParty`；MNPR 转发且本配置实际使用的默认 NixOS module 通过 `thirdPartyNixosModules` 统一引入，缓存模块单独引入。nPanel 的 NixOS module 来自 `Melorise/nPanel` 的 `nixos-26.05/v2.0.0` 分支，并通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，实际使用的上游 NixOS module 通过 `thirdPartyNixosModules` 统一引入；第三方缓存清单同时配置顶层 `nixConfig` 与 NixOS 的 `nix.settings`。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -163,10 +165,10 @@ programs.clash-verge = {
 - `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
 - `modules/desktops/`：桌面环境、字体与本地化配置目录。
 - `modules/desktops/cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 MNPR 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
+- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、通过 MNPR 条目选择启用的 Codex Desktop 与 Clash Party 缓存、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 Nix 镜像、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。第三方缓存由 `flake.nix` 的顶层清单统一配置；新增普通用户态软件不应默认放在这里。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。

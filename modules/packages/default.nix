@@ -8,11 +8,6 @@
     ];
   };
 
-  mnpr.caches.enable = [
-    "clash-party"
-    "codex-desktop"
-  ];
-
   nixpkgs.config.allowUnfree = true;
   
   #firefox
