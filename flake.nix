@@ -1,20 +1,6 @@
 {
   description = "tippy nixos";
 
-  nixConfig = {
-    substituters = [
-      "https://mirrors.cernet.edu.cn/nix-channels/store"
-    ];
-    extra-substituters = [
-      "https://melorise-cp-nix.cachix.org"
-      "https://melorise-codex-desktop.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "melorise-cp-nix.cachix.org-1:GNg96VizkktTdGMrvl6+PLPHY3jPce4a72HqP2cj4S4="
-      "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U="
-    ];
-  };
-
   inputs = {
     nixpkgs.url =
       #"github:NixOS/nixpkgs/nixos-26.05";
@@ -50,22 +36,6 @@
 
   outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
-      thirdPartyCaches = {
-        clash-party = {
-          substituter = "https://melorise-cp-nix.cachix.org";
-          publicKey = "melorise-cp-nix.cachix.org-1:GNg96VizkktTdGMrvl6+PLPHY3jPce4a72HqP2cj4S4=";
-        };
-        codex-desktop = {
-          substituter = "https://melorise-codex-desktop.cachix.org";
-          publicKey = "melorise-codex-desktop.cachix.org-1:PN32aGXkz7tWwvCuwQfKo3/P/dOG/oa8mS8y58pdB5U=";
-        };
-      };
-      nixpkgsSubstituters = [
-        "https://mirrors.cernet.edu.cn/nix-channels/store"
-      ];
-      cacheEntries = builtins.attrValues thirdPartyCaches;
-      cacheSubstituters = map (cache: cache.substituter) cacheEntries;
-      cachePublicKeys = map (cache: cache.publicKey) cacheEntries;
       system = "x86_64-linux";
       pkgs-unstable = import nixpkgs-unstable {
         inherit system;
@@ -97,14 +67,6 @@
         inputs.clash-party.nixosModules.clash-party
       ];
 
-      thirdPartyCacheModule = {
-        nix.settings = {
-          substituters = nixpkgsSubstituters;
-          extra-substituters = cacheSubstituters;
-          trusted-public-keys = cachePublicKeys;
-        };
-      };
-
       mkHost = hostModule:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -114,7 +76,6 @@
           modules =
             [
               hostModule
-              thirdPartyCacheModule
             ]
             ++ thirdPartyNixosModules
             ++ [

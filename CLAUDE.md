@@ -85,7 +85,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - Amber PM、Clash Party、Codex Desktop、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。
 - 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
 - 实际使用的上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合：Amber PM 使用 `nixosModules.default`，Clash Party 使用 `nixosModules.clash-party`。只加入本配置实际使用的模块。
-- Clash Party 与 Codex Desktop 的 Cachix URL 和公钥在 `flake.nix` 顶层集中声明；同一份清单同时生成顶层 `nixConfig` 和 NixOS 的 `nix.settings`，使构建待切换世代时可使用缓存，并在切换后持久配置 Nix daemon。顶层 Flake 配置须由调用方接受后才会在构建阶段生效。
+- CERNET Nixpkgs 镜像，以及 Clash Party 与 Codex Desktop 的 Cachix URL 和公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。
 - Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 的 NixOS module 在 `modules/packages/default.nix` 中启用。
 
 ## 软件与配置的放置规则
@@ -141,7 +141,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，实际使用的上游 NixOS module 通过 `thirdPartyNixosModules` 统一引入；第三方缓存清单同时配置顶层 `nixConfig` 与 NixOS 的 `nix.settings`。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，实际使用的上游 NixOS module 通过 `thirdPartyNixosModules` 统一引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -168,7 +168,7 @@ programs.clash-verge = {
 - `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 `allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。Nixpkgs 镜像与第三方缓存均由 `flake.nix` 的顶层清单统一配置；新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
