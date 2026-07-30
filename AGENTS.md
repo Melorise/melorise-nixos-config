@@ -174,7 +174,7 @@ programs.clash-verge = {
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 - `modules/server/`：系统级服务配置目录。
 - `modules/server/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
-- `modules/server/npanel.nix`：仅由 ASUS 主机导入并启用 `Melorise/nPanel` 的 `nixos-26.05/v2.0.0` 分支提供的 nPanel 服务；服务使用端口 4096 和安全入口 `/npanel`，状态目录为 `/var/lib/npanel`、运行时目录为 `/run/npanel`，首次启动会在状态目录写入一次性管理员密码。
+- `modules/server/npanel.nix`：仅由 ASUS 主机导入并启用 `Melorise/nPanel` 的 `nixos-26.05/v2.0.2` 分支提供的 nPanel 服务；服务使用端口 4096 和安全入口 `/npanel`，状态目录为 `/var/lib/npanel`、运行时目录为 `/run/npanel`，首次启动会在状态目录写入一次性管理员密码。
 
 ### `home/tippy/`
 

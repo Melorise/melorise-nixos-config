@@ -19,18 +19,18 @@
 
     amber-pm.url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
 
-    clash-party.url = "git+https://github.com/Melorise/cp-nix.git?ref=main";
+    clash-party.url = "github:Melorise/cp-nix/main";
 
-    codex-desktop.url = "git+https://github.com/Melorise/codex-desktop-linux-builder.git?ref=nix";
+    codex-desktop.url = "github:Melorise/codex-desktop-linux-builder/nix";
 
     spark-store = {
       url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
       flake = false;
     };
 
-    spark-winfonts.url = "git+https://github.com/Melorise/spark-winfonts-for-nixos.git?ref=main";
+    spark-winfonts.url = "github:Melorise/spark-winfonts-for-nixos/main";
 
-    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.1";
+    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.2";
   };
 
 
