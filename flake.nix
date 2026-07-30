@@ -30,7 +30,7 @@
 
     spark-winfonts.url = "github:Melorise/spark-winfonts-for-nixos/main";
 
-    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.2";
+    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.3";
   };
 
 
