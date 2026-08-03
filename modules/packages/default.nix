@@ -20,12 +20,6 @@
   
   #firefox
   #programs.firefox.enable = true;
-  
-  #clash-verge-rev
-  programs.clash-verge = {
-    enable = true;
-    serviceMode = true;
-  };
 
   # clash-party
   programs.clash-party = {

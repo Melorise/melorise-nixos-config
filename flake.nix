@@ -17,7 +17,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    amber-pm.url = "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
+    amber-pm = {
+      url =
+        "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
 
     clash-party.url = "github:Melorise/cp-nix/main";
 
@@ -28,9 +32,17 @@
       flake = false;
     };
 
-    spark-winfonts.url = "github:Melorise/spark-winfonts-for-nixos/main";
-
-    npanel.url = "github:Melorise/nPanel/nixos-26.05/v2.0.3";
+    spark-winfonts = {
+      url = 
+        "github:Melorise/spark-winfonts-for-nixos/main";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    
+    npanel = {
+      url = 
+        "github:Melorise/nPanel/nixos-26.05/v2.0.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
 
