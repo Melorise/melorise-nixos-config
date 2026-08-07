@@ -13,6 +13,7 @@
     ./development/git.nix
     ./development/nodejs.nix
     ./development/python.nix
+    ./development/rust.nix
     ./development/ai-agent.nix
     ./packages/packages.nix
     ./packages/packages-unstable.nix

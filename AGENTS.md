@@ -64,6 +64,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
     │   ├── git.nix                   Git 用户配置
     │   ├── nodejs.nix                Node.js 与 npm 用户配置
     │   ├── python.nix                Python 3.14 用户环境
+    │   ├── rust.nix                  Rust 工具链与开发环境
     │   └── ssh.nix                   SSH 用户配置
     └── packages/                     日常及其他普通用户软件
         ├── packages.nix              稳定版通用用户软件
@@ -130,6 +131,7 @@ programs.clash-verge = {
    - AI agent 相关软件放入 `development/ai-agent.nix`。
    - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
    - Python 解释器及相关环境配置放入 `development/python.nix`。
+   - Rust 工具链与相关配置放入 `development/rust.nix`。
    - Git 配置放入 `development/git.nix`。
    - SSH 配置放入 `development/ssh.nix`。
    - 后续出现新的开发类别时，应在 `development/` 下新建语义清晰的专用文件，并在 `home/tippy/default.nix` 中导入。
@@ -186,6 +188,7 @@ programs.clash-verge = {
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
+- `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer。Rust 相关内容应集中在这里。
 - `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
 - `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
 - `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。
