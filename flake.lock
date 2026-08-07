@@ -82,11 +82,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1785621037,
-        "narHash": "sha256-9T3/l1/PrfpayWhXAAZNfxTfZ1gcgiYZ1Q2Q34iNkb4=",
+        "lastModified": 1785938933,
+        "narHash": "sha256-49CaLf3FFu6W8pC2r87rfrANCBWALt6YxloqAMmbItE=",
         "owner": "Melorise",
         "repo": "codex-desktop-linux-builder",
-        "rev": "c4581195c2bfec50a271f59146f680b9a0ebdd03",
+        "rev": "20825ea9a907adbce8e5a10e466543704c5aaef6",
         "type": "github"
       },
       "original": {
