@@ -29,6 +29,26 @@
     wget
     git
     fastfetch
+    gcc
+    gnumake
+    binutils
+    pkg-config
+    cmake
+    ninja
+    autoconf
+    automake
+    libtool
+    m4
+    bison
+    flex
+    gettext
+    gawk
+    patch
+    file
+    which
+    gdb
+    unzip
+    zip
   ];
  
   

@@ -174,7 +174,7 @@ programs.clash-verge = {
 - `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、direnv 以及少量基础工具。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
 - `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
