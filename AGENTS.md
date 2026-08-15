@@ -221,7 +221,7 @@ programs.clash-verge = {
 - `home/nixos/development/`：WSL 用户的开发工具与配置，不包含 ChatGPT 桌面应用或其他桌面软件。
 - `home/nixos/development/ai-agent.nix`：仅安装 Claude Code、Codex、OpenCode 和 cc-switch 等 CLI AI agent。
 - `home/nixos/development/git.nix`：WSL 用户的 Git 配置。
-- `home/nixos/development/nodejs.nix`：安装 Node.js 24 并设置 npm 全局包目录，不包含物理机专用的 `dsh` 包装脚本。
+- `home/nixos/development/nodejs.nix`：安装 Node.js 24、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。
 - `home/nixos/development/python.nix`：安装 Python 3.14。
 - `home/nixos/development/rust.nix`：安装 Rust 编译器、格式化工具、Clippy 和 rust-analyzer。
 - `home/nixos/development/ssh.nix`：WSL 用户的 SSH 主机配置。
