@@ -30,6 +30,7 @@
     ../../modules/hardware/nvidia.nix
     ../../modules/users/tippy.nix
     ../../modules/packages/default.nix
+    ../../modules/packages/clash.nix
     ../../modules/packages/spark-store.nix
   ];
 

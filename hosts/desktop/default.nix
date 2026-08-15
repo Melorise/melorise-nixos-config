@@ -22,6 +22,7 @@
     ../../modules/hardware/zram.nix
     ../../modules/users/tippy.nix
     ../../modules/packages/default.nix
+    ../../modules/packages/clash.nix
   ];
 
   nix.settings = {

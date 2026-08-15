@@ -23,7 +23,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义包集、第三方上游与 nPanel 输入、缓存、第三方聚合和两台设备输出
+├── flake.nix                         Flake 入口；定义包集、第三方上游与 nPanel 输入、缓存、第三方聚合和三台设备输出
 ├── flake.lock                        Flake 输入版本锁定文件
 ├── AGENTS.md                         Codex 协作与仓库维护规范
 ├── CLAUDE.md                         Claude 协作规范
@@ -32,9 +32,11 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── desktop/
 │   │   ├── default.nix               台式机设备配置、Nix 信任用户与 GRUB 设置
 │   │   └── hardware-configuration.nix 台式机硬件/磁盘生成配置
-│   └── asus/
-│       ├── default.nix               华硕设备配置、Nix 信任用户与 GRUB/Windows 探测设置
-│       └── hardware-configuration.nix 华硕硬件/磁盘生成配置
+│   ├── asus/
+│   │   ├── default.nix               华硕设备配置、Nix 信任用户与 GRUB/Windows 探测设置
+│   │   └── hardware-configuration.nix 华硕硬件/磁盘生成配置
+│   └── wsl/
+│       └── default.nix               NixOS-WSL 配置、默认用户与 WSL 专用系统模块
 ├── modules/
 │   ├── hardware/                     硬件与底层系统资源配置
 │   │   ├── audio.nix                 PipeWire 音频配置
@@ -49,6 +51,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── locale.nix                中文 locale 与输入法配置
 │   ├── packages/                     系统级软件及其集成配置
 │   │   ├── default.nix               通用系统软件配置
+│   │   ├── clash.nix                  物理机 Clash Party 与 Clash Verge 配置
 │   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
 │   ├── users/
 │   │   └── tippy.nix                 tippy 系统用户配置
@@ -83,11 +86,11 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- Amber PM、Clash Party、Codex Desktop、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，应当添加 `nixpkgs.follows`以减少占用。
+- Amber PM、Clash Party、Codex Desktop、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，应当添加 `nixpkgs.follows`以减少占用。
 - 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
-- 实际使用的上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合：Amber PM 使用 `nixosModules.default`，Clash Party 使用 `nixosModules.clash-party`。只加入本配置实际使用的模块。
+- 公共上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合，当前包含 Amber PM 的 `nixosModules.default`；仅桌面机与 ASUS 通过 `mkHost.extraNixosModules` 注入 Clash Party 的 `nixosModules.clash-party`，仅 WSL 主机注入 NixOS-WSL 的 `nixosModules.default`。只向相应主机加入实际使用的模块。
 - CERNET Nixpkgs 镜像，以及 Clash Party 与 Codex Desktop 的 Cachix URL 和公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。
-- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 的 NixOS module 在 `modules/packages/default.nix` 中启用。
+- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 与 Clash Verge 在 `modules/packages/clash.nix` 中配置，并只由桌面机与 ASUS 导入。
 
 ## 软件与配置的放置规则
 
@@ -143,7 +146,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，实际使用的上游 NixOS module 通过 `thirdPartyNixosModules` 统一引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop` 和 `asus` 两台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -151,10 +154,11 @@ programs.clash-verge = {
 
 ### `hosts/`
 
-- `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式、Nix 实验性功能，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块。
+- `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式、Nix 实验性功能，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块和 Clash 配置。
 - `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块及 nPanel 测试服务。
+- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块、Clash 配置及 nPanel 测试服务。
 - `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
+- `hosts/wsl/default.nix`：NixOS-WSL 设备级入口，设置 WSL 默认用户、Nix 实验性功能，并导入适合 WSL 的垃圾回收、Docker、用户和通用软件模块；不导入物理机硬件、桌面环境或 Clash 配置。
 
 ### `modules/`
 
@@ -170,12 +174,13 @@ programs.clash-verge = {
 - `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、Clash Verge、需要 capability 包装器的 Clash Party，以及少量基础工具。新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、direnv 以及少量基础工具。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
+- `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 - `modules/server/`：系统级服务配置目录。
-- `modules/server/docker.nix`：为两台设备启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
+- `modules/server/docker.nix`：为物理机和 WSL 主机启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
 - `modules/server/npanel.nix`：仅由 ASUS 主机导入并启用 `Melorise/nPanel` 的 `nixos-26.05/v2.0.2` 分支提供的 nPanel 服务；服务使用端口 4096 和安全入口 `/npanel`，状态目录为 `/var/lib/npanel`、运行时目录为 `/run/npanel`，首次启动会在状态目录写入一次性管理员密码。
 
 ### `home/tippy/`

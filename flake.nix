@@ -17,6 +17,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     amber-pm = {
       url =
         "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
@@ -76,10 +81,9 @@
 
       thirdPartyNixosModules = [
         inputs.amber-pm.nixosModules.default
-        inputs.clash-party.nixosModules.clash-party
       ];
 
-      mkHost = hostModule:
+      mkHost = { hostModule, extraNixosModules ? [ ] }:
         nixpkgs.lib.nixosSystem {
           inherit system;
 
@@ -90,6 +94,7 @@
               hostModule
             ]
             ++ thirdPartyNixosModules
+            ++ extraNixosModules
             ++ [
               home-manager.nixosModules.home-manager
               {
@@ -106,8 +111,24 @@
     in
     {
       nixosConfigurations = {
-        desktop = mkHost ./hosts/desktop;
-        asus = mkHost ./hosts/asus;
+        desktop = mkHost {
+          hostModule = ./hosts/desktop;
+          extraNixosModules = [
+            inputs.clash-party.nixosModules.clash-party
+          ];
+        };
+        asus = mkHost {
+          hostModule = ./hosts/asus;
+          extraNixosModules = [
+            inputs.clash-party.nixosModules.clash-party
+          ];
+        };
+        wsl = mkHost {
+          hostModule = ./hosts/wsl;
+          extraNixosModules = [
+            inputs.nixos-wsl.nixosModules.default
+          ];
+        };
       };
     };
 }

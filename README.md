@@ -41,3 +41,22 @@ sudo nixos-rebuild switch --flake .#desktop
 ```bash
 sudo nixos-rebuild switch --flake .#asus
 ```
+
+### 应用 WSL 配置
+
+先从 [NixOS-WSL Releases](https://github.com/nix-community/NixOS-WSL/releases/latest) 下载 `nixos.wsl`，然后在 PowerShell 中安装 WSL2 发行版：
+
+```powershell
+wsl --install --no-distribution
+wsl --install --from-file .\nixos.wsl --name NixOS
+```
+
+进入 NixOS 后，将本仓库放在 WSL 文件系统中，并手动应用 `wsl` 配置：
+
+```bash
+wsl -d NixOS
+cd /path/to/nixos
+sudo nixos-rebuild switch --flake .#wsl
+```
+
+应用完成后，可以通过 `wsl --shutdown` 后重新启动发行版，使默认用户设置生效。上述命令只作操作记录，仓库维护时不会由 agent 自动执行。

@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, pkgs-thirdParty, ... }:
+{ pkgs, ... }:
 
 {
 
@@ -21,19 +21,6 @@
   #firefox
   #programs.firefox.enable = true;
 
-  # clash-party
-  programs.clash-party = {
-    enable = true;
-    package = pkgs-thirdParty.clash-party;
-  };
-
-  programs.clash-verge = {
-    enable = true;
-    tunMode = true;
-    serviceMode = true;
-    package = pkgs-unstable.clash-verge-rev;
-  };
-  
   # 用于自动进入开发环境的direnv
   programs.direnv.enable = true;
 
