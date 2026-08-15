@@ -6,6 +6,6 @@
     fd
     htop
 
-    qq
+    unityhub
   ];
 }
