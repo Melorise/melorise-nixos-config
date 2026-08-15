@@ -30,7 +30,7 @@
 
     clash-party.url = "github:Melorise/cp-nix/main";
 
-    codex-desktop.url = "github:Melorise/codex-desktop-linux-builder/nix";
+    chatgpt.url = "github:Melorise/codex-desktop-linux-builder/nix";
 
     spark-store = {
       url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
@@ -65,7 +65,7 @@
           clash-party = inputs.clash-party.packages.${system}.clash-party;
         })
         (_final: _prev: {
-          codex-desktop = inputs.codex-desktop.packages.${system}.codex-desktop;
+          chatgpt = inputs.chatgpt.packages.${system}.chatgpt;
         })
         (final: _prev: {
           spark-store = final.callPackage "${inputs.spark-store}/nix/package.nix" {

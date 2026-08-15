@@ -86,11 +86,11 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- Amber PM、Clash Party、Codex Desktop、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，应当添加 `nixpkgs.follows`以减少占用。
+- Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，应当添加 `nixpkgs.follows`以减少占用。
 - 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
 - 公共上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合，当前包含 Amber PM 的 `nixosModules.default`；仅桌面机与 ASUS 通过 `mkHost.extraNixosModules` 注入 Clash Party 的 `nixosModules.clash-party`，仅 WSL 主机注入 NixOS-WSL 的 `nixosModules.default`。只向相应主机加入实际使用的模块。
-- CERNET Nixpkgs 镜像，以及 Clash Party 与 Codex Desktop 的 Cachix URL 和公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。
-- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。Codex Desktop 在 Home Manager 的 `development/ai-agent.nix` 中安装，Clash Party 与 Clash Verge 在 `modules/packages/clash.nix` 中配置，并只由桌面机与 ASUS 导入。
+- CERNET Nixpkgs 镜像，以及 Clash Party 的 Cachix URL 和公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。
+- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。ChatGPT 应用在 Home Manager 的 `development/ai-agent.nix` 中通过 `pkgs-thirdParty.chatgpt` 安装，并使用上游新版 `nix` 分支自带的 desktop entry；Clash Party 与 Clash Verge 在 `modules/packages/clash.nix` 中配置，并只由桌面机与 ASUS 导入。
 
 ## 软件与配置的放置规则
 
@@ -146,7 +146,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、Codex Desktop、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -174,7 +174,7 @@ programs.clash-verge = {
 - `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 Codex Desktop 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
 - `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
@@ -189,7 +189,7 @@ programs.clash-verge = {
 - `home/tippy/config/`：用户级基础环境配置目录。
 - `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全、语法高亮和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
-- `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，Codex Desktop 使用 `pkgs-thirdParty`；同时通过用户级 desktop entry 仅为 Codex Desktop 设置 XIM，以绕过其内置旧版 GLib 与系统 `fcitx5-gtk` 的兼容问题并保持 Cachix 原包命中。后续同类软件均放在这里。
+- `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，ChatGPT 应用使用 `pkgs-thirdParty.chatgpt`；desktop entry 由新版上游 Nix 包直接提供。后续同类软件均放在这里。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
