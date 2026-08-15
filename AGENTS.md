@@ -191,7 +191,7 @@ programs.clash-verge = {
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
 - `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，ChatGPT 应用使用 `pkgs-thirdParty.chatgpt`；desktop entry 由新版上游 Nix 包直接提供。后续同类软件均放在这里。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
-- `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js 并设置 npm 全局包目录。Node.js 相关内容应集中在这里。
+- `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录，并将其可执行文件目录加入用户会话 `PATH`。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
 - `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer。Rust 相关内容应集中在这里。
 - `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
