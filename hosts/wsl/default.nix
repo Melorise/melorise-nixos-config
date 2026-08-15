@@ -1,17 +1,17 @@
 { ... }:
 
 {
-  networking.hostName = "tippy-wsl";
+  networking.hostName = "nixos-wsl";
 
   wsl = {
     enable = true;
-    defaultUser = "tippy";
+    defaultUser = "nixos";
   };
 
   imports = [
     ../../modules/hardware/gc.nix
     ../../modules/server/docker.nix
-    ../../modules/users/tippy.nix
+    ../../modules/users/nixos.nix
     ../../modules/packages/default.nix
   ];
 
@@ -23,7 +23,7 @@
 
     trusted-users = [
       "root"
-      "tippy"
+      "nixos"
     ];
   };
 

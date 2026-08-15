@@ -86,7 +86,12 @@
         inputs.amber-pm.nixosModules.default
       ];
 
-      mkHost = { hostModule, extraNixosModules ? [ ] }:
+      mkHost = {
+        hostModule,
+        extraNixosModules ? [ ],
+        homeUser ? "tippy",
+        homeModule ? ./home/tippy,
+      }:
         nixpkgs.lib.nixosSystem {
           inherit system;
 
@@ -101,7 +106,7 @@
             ++ [
               home-manager.nixosModules.home-manager
               {
-                home-manager.users.tippy = import ./home/tippy;
+                home-manager.users.${homeUser} = import homeModule;
 
                 home-manager.extraSpecialArgs = {
                   inherit pkgs-unstable pkgs-thirdParty;
@@ -128,6 +133,8 @@
         };
         wsl = mkHost {
           hostModule = ./hosts/wsl;
+          homeUser = "nixos";
+          homeModule = ./home/nixos;
           extraNixosModules = [
             inputs.nixos-wsl.nixosModules.default
           ];

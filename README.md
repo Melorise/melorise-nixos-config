@@ -51,7 +51,7 @@ wsl --install --no-distribution
 wsl --install --from-file .\nixos.wsl --name NixOS
 ```
 
-进入 NixOS 后，将本仓库放在 WSL 文件系统中，并手动应用 `wsl` 配置：
+进入 NixOS 后，将本仓库放在 WSL 文件系统中，并手动应用 `wsl` 配置。该配置使用独立的 `nixos` 用户和 `home/nixos` Home Manager 配置，不会安装物理机 `tippy` 配置中的 Chrome、QQ、Unity Hub 或 ChatGPT 桌面应用：
 
 ```bash
 wsl -d NixOS

@@ -54,33 +54,47 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   ├── clash.nix                  物理机 Clash Party 与 Clash Verge 配置
 │   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
 │   ├── users/
+│   │   ├── nixos.nix                 nixos 系统用户配置
 │   │   └── tippy.nix                 tippy 系统用户配置
 │   └── server/                       系统级服务配置
 │       ├── docker.nix                Docker 与 Docker Compose 环境
 │       └── npanel.nix                ASUS nPanel 测试服务
-└── home/tippy/
-    ├── default.nix                   Home Manager 用户配置入口
-    ├── config/                       用户级基础环境配置
-    │   └── zsh.nix                   Zsh、命令补全与 Powerlevel10k 配置
-    ├── development/                  开发相关软件与配置
-    │   ├── ai-agent.nix              AI agent 类用户软件
+├── home/tippy/
+│   ├── default.nix                   物理机 tippy 的 Home Manager 用户配置入口
+│   ├── config/                       用户级基础环境配置
+│   │   └── zsh.nix                   Zsh、命令补全与 Powerlevel10k 配置
+│   ├── development/                  开发相关软件与配置
+│   │   ├── ai-agent.nix              AI agent 类用户软件
+│   │   ├── git.nix                   Git 用户配置
+│   │   ├── nodejs.nix                Node.js 与 npm 用户配置
+│   │   ├── python.nix                Python 3.14 用户环境
+│   │   ├── rust.nix                  Rust 工具链与开发环境
+│   │   └── ssh.nix                   SSH 用户配置
+│   └── packages/                     日常及其他普通用户软件
+│       ├── packages.nix              稳定版通用用户软件
+│       └── packages-unstable.nix     unstable 通用用户软件
+└── home/nixos/
+    ├── default.nix                   WSL nixos 用户的 Home Manager 配置入口
+    ├── config/                       WSL 用户级基础环境配置
+    │   └── zsh.nix                   WSL 用户的 Zsh、补全与 Powerlevel10k 配置
+    ├── development/                  WSL 用户需要的开发工具与配置
+    │   ├── ai-agent.nix              CLI AI agent 软件
     │   ├── git.nix                   Git 用户配置
     │   ├── nodejs.nix                Node.js 与 npm 用户配置
     │   ├── python.nix                Python 3.14 用户环境
     │   ├── rust.nix                  Rust 工具链与开发环境
     │   └── ssh.nix                   SSH 用户配置
-    └── packages/                     日常及其他普通用户软件
-        ├── packages.nix              稳定版通用用户软件
-        └── packages-unstable.nix     unstable 通用用户软件
+    └── packages/
+        └── packages.nix              WSL 用户的终端基础软件
 ```
 
 ## 配置分层
 
 - `hosts/` 和 `modules/` 是 NixOS 系统级配置。
-- `home/tippy/` 是 Home Manager 用户级配置。
+- `home/tippy/` 是物理机 `tippy` 用户的 Home Manager 配置；`home/nixos/` 是 WSL `nixos` 用户的独立 Home Manager 配置，二者不得交叉导入。
 - 绝大部分用户态软件应安装在 Home Manager。
 - 系统级仅安装少量通用软件，或必须依赖系统服务、系统权限、网络/TUN、桌面服务等 NixOS 配置的软件。
-- 新增用户态软件时，优先放入 `home/tippy/`；不要因为方便而直接添加到 `modules/packages/default.nix`。
+- 新增用户态软件时，按目标主机放入对应的 Home Manager 配置；WSL 软件放入 `home/nixos/`，不要因为方便而直接添加到 `modules/packages/default.nix`。
 
 ## 包集与第三方来源
 
@@ -146,7 +160,7 @@ programs.clash-verge = {
 
 ### 根目录
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
+- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入；`mkHost` 同时按主机选择 Home Manager 用户和配置，物理机使用 `tippy`，WSL 使用 `nixos`。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
 - `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
 - `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
 - `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
@@ -158,7 +172,7 @@ programs.clash-verge = {
 - `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
 - `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块、Clash 配置及 nPanel 测试服务。
 - `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/wsl/default.nix`：NixOS-WSL 设备级入口，设置 WSL 默认用户、Nix 实验性功能，并导入适合 WSL 的垃圾回收、Docker、用户和通用软件模块；不导入物理机硬件、桌面环境或 Clash 配置。
+- `hosts/wsl/default.nix`：NixOS-WSL 设备级入口，创建并设置 `nixos` 为 WSL 默认用户，配置 Nix 实验性功能，并导入适合 WSL 的垃圾回收、Docker、用户和通用软件模块；不导入物理机硬件、桌面环境、Clash 或 `home/tippy` 配置。
 
 ### `modules/`
 
@@ -178,6 +192,7 @@ programs.clash-verge = {
 - `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
+- `modules/users/nixos.nix`：定义 WSL 专用的 `nixos` 用户、默认 Zsh 登录 Shell 和 `docker`、`wheel` 用户组。
 - `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
 - `modules/server/`：系统级服务配置目录。
 - `modules/server/docker.nix`：为物理机和 WSL 主机启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
@@ -198,3 +213,16 @@ programs.clash-verge = {
 - `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
 - `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。
 - `home/tippy/packages/packages-unstable.nix`：unstable 通用用户软件，存放更新频繁、无需刻意控制版本的软件；已由 `default.nix` 导入。
+
+### `home/nixos/`
+
+- `home/nixos/default.nix`：WSL `nixos` 用户的 Home Manager 入口，设置用户、家目录和状态版本，并只导入 WSL 所需的基础环境、开发工具、CLI AI agent 与终端软件。
+- `home/nixos/config/zsh.nix`：启用 WSL 用户的 Zsh、命令补全、语法高亮和 Powerlevel10k。
+- `home/nixos/development/`：WSL 用户的开发工具与配置，不包含 ChatGPT 桌面应用或其他桌面软件。
+- `home/nixos/development/ai-agent.nix`：仅安装 Claude Code、Codex、OpenCode 和 cc-switch 等 CLI AI agent。
+- `home/nixos/development/git.nix`：WSL 用户的 Git 配置。
+- `home/nixos/development/nodejs.nix`：安装 Node.js 24 并设置 npm 全局包目录，不包含物理机专用的 `dsh` 包装脚本。
+- `home/nixos/development/python.nix`：安装 Python 3.14。
+- `home/nixos/development/rust.nix`：安装 Rust 编译器、格式化工具、Clippy 和 rust-analyzer。
+- `home/nixos/development/ssh.nix`：WSL 用户的 SSH 主机配置。
+- `home/nixos/packages/packages.nix`：仅安装 ripgrep、fd 和 htop 等终端基础软件，不安装 Chrome、QQ 或 Unity Hub。
