@@ -86,7 +86,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 
 - `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
 - 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，应当添加 `nixpkgs.follows`以减少占用。
+- Amber PM、Clash Party、ChatGPT、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，必须添加 `nixpkgs.follows`以减少占用。
 - 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
 - 公共上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合，当前包含 Amber PM 的 `nixosModules.default`；仅桌面机与 ASUS 通过 `mkHost.extraNixosModules` 注入 Clash Party 的 `nixosModules.clash-party`，仅 WSL 主机注入 NixOS-WSL 的 `nixosModules.default`。只向相应主机加入实际使用的模块。
 - CERNET Nixpkgs 镜像，以及 Clash Party 的 Cachix URL 和公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。

@@ -30,7 +30,10 @@
 
     clash-party.url = "github:Melorise/cp-nix/main";
 
-    chatgpt.url = "github:Melorise/codex-desktop-linux-builder/nix";
+    chatgpt = {
+      url = "github:Melorise/codex-desktop-linux-builder/nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
 
     spark-store = {
       url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
