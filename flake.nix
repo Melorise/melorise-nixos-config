@@ -51,6 +51,8 @@
         "github:Melorise/nPanel/nixos-26.05/v2.0.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    meloasr.url = "github:Melorise/MeloASR";
   };
 
 
@@ -69,6 +71,9 @@
         })
         (_final: _prev: {
           chatgpt = inputs.chatgpt.packages.${system}.chatgpt;
+        })
+        (_final: _prev: {
+          meloasr = inputs.meloasr.packages.${system}.meloasr;
         })
         (final: _prev: {
           spark-store = final.callPackage "${inputs.spark-store}/nix/package.nix" {

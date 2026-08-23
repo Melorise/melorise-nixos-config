@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, pkgs-thirdParty, ... }:
 
 {
 
@@ -8,9 +8,11 @@
     ];
     extra-substituters = [
       "https://melorise-cp-nix.cachix.org"
+      "https://meloasr.cachix.org"
     ];
     trusted-public-keys = [
       "melorise-cp-nix.cachix.org-1:GNg96VizkktTdGMrvl6+PLPHY3jPce4a72HqP2cj4S4="
+      "meloasr.cachix.org-1:oMmpfj7D1pQTtJx6cHYupvPDJPFlkBB0JIpJYvkR5hc="
     ];
   };
 
@@ -47,7 +49,13 @@
     gdb
     unzip
     zip
+  ] ++ lib.optionals config.services.xserver.enable [
+    pkgs-thirdParty.meloasr
   ];
+
+  environment.etc."xdg/autostart/meloasr.desktop" = lib.mkIf config.services.xserver.enable {
+    source = "${pkgs-thirdParty.meloasr}/etc/xdg/autostart/meloasr.desktop";
+  };
  
   
 }
