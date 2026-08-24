@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-thirdParty, ... }:
+{ pkgs, ... }:
 
 {
 
@@ -49,13 +49,5 @@
     gdb
     unzip
     zip
-  ] ++ lib.optionals config.services.xserver.enable [
-    pkgs-thirdParty.meloasr
   ];
-
-  environment.etc."xdg/autostart/meloasr.desktop" = lib.mkIf config.services.xserver.enable {
-    source = "${pkgs-thirdParty.meloasr}/etc/xdg/autostart/meloasr.desktop";
-  };
- 
-  
 }

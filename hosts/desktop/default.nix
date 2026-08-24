@@ -22,6 +22,7 @@
     ../../modules/hardware/zram.nix
     ../../modules/users/tippy.nix
     ../../modules/packages/default.nix
+    ../../modules/packages/desktop-packages.nix
     ../../modules/packages/clash.nix
   ];
 

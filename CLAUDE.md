@@ -51,7 +51,8 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── locale.nix                中文 locale 与输入法配置
 │   ├── packages/                     系统级软件及其集成配置
 │   │   ├── default.nix               通用系统软件配置
-│   │   ├── clash.nix                  物理机 Clash Party 与 Clash Verge 配置
+│   │   ├── desktop-packages.nix      物理机桌面专用软件配置
+│   │   ├── clash.nix                 物理机 Clash Party 与 Clash Verge 配置
 │   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
 │   ├── users/
 │   │   ├── nixos.nix                 nixos 系统用户配置
@@ -95,6 +96,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 - 绝大部分用户态软件应安装在 Home Manager。
 - 系统级仅安装少量通用软件，或必须依赖系统服务、系统权限、网络/TUN、桌面服务等 NixOS 配置的软件。
 - 新增用户态软件时，按目标主机放入对应的 Home Manager 配置；WSL 软件放入 `home/nixos/`，不要因为方便而直接添加到 `modules/packages/default.nix`。
+- 需要 NixOS 系统集成且仅用于图形桌面的软件放入 `modules/packages/desktop-packages.nix`，并只由物理机导入。
 
 ## 包集与第三方来源
 
@@ -188,7 +190,8 @@ programs.clash-verge = {
 - `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 MeloASR 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。MeloASR 仅在启用 X11 的物理机上系统级安装，并通过 `/etc/xdg/autostart` 在桌面登录时启动。桌面网络代理软件单独放在 `clash.nix`，新增普通用户态软件不应默认放在这里。
+- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 MeloASR 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。桌面专用软件和桌面网络代理软件分别放在 `desktop-packages.nix` 与 `clash.nix`，新增普通用户态软件不应默认放在这里。
+- `modules/packages/desktop-packages.nix`：仅由桌面机与 ASUS 导入的桌面专用系统软件配置；通过 NixOS 模块启用 Steam，并安装自行管理自动启动配置的 MeloASR。
 - `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。
