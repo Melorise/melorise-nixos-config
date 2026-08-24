@@ -191,7 +191,7 @@ programs.clash-verge = {
 - `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
 - `modules/packages/`：系统级软件及其集成配置目录。
 - `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 MeloASR 的 Cachix 设置、`allowUnfree`、direnv、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。桌面专用软件和桌面网络代理软件分别放在 `desktop-packages.nix` 与 `clash.nix`，新增普通用户态软件不应默认放在这里。
-- `modules/packages/desktop-packages.nix`：仅由桌面机与 ASUS 导入的桌面专用系统软件配置；通过 NixOS 模块启用 Steam，并为其运行环境提供 Noto CJK 中文字体；同时安装自行管理自动启动配置的 MeloASR。
+- `modules/packages/desktop-packages.nix`：仅由桌面机与 ASUS 导入的桌面专用系统软件配置；通过 NixOS 模块启用 Steam 及用于为 Proton 游戏前缀安装兼容组件的 Protontricks；同时安装自行管理自动启动配置的 MeloASR。
 - `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
 - `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
 - `modules/users/`：系统用户配置目录。

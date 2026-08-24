@@ -1,12 +1,9 @@
-{ pkgs, pkgs-thirdParty, ... }:
+{ pkgs-thirdParty, ... }:
 
 {
   programs.steam = {
     enable = true;
-    fontPackages = with pkgs; [
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
-    ];
+    protontricks.enable = true;
   };
 
   environment.systemPackages = [
