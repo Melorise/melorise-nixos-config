@@ -13,7 +13,8 @@ let
     libayatana-appindicator
     librsvg
     libsoup_3
-    libxdo
+    # Nixpkgs 的 xdotool 包同时提供 Tauri 所需的 libxdo。
+    xdotool
     openssl
     pango
     webkitgtk_4_1
