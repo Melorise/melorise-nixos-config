@@ -33,7 +33,7 @@ in
     rustfmt
     clippy
     rust-analyzer
-  ] ++ tauriLibraries;
+  ];
 
   home.sessionVariables = {
     PKG_CONFIG_PATH = lib.makeSearchPathOutput "dev" "lib/pkgconfig" tauriLibraries;
