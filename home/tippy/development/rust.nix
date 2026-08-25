@@ -10,6 +10,7 @@ let
     gdk-pixbuf
     glib
     gtk3
+    harfbuzz
     libayatana-appindicator
     librsvg
     libsoup_3
@@ -18,6 +19,7 @@ let
     openssl
     pango
     webkitgtk_4_1
+    zlib
   ];
 in
 {
@@ -36,7 +38,10 @@ in
   ];
 
   home.sessionVariables = {
-    PKG_CONFIG_PATH = lib.makeSearchPathOutput "dev" "lib/pkgconfig" tauriLibraries;
+    PKG_CONFIG_PATH = lib.concatStringsSep ":" [
+      (lib.makeSearchPathOutput "dev" "lib/pkgconfig" tauriLibraries)
+      (lib.makeSearchPathOutput "dev" "share/pkgconfig" tauriLibraries)
+    ];
     LD_LIBRARY_PATH = lib.makeLibraryPath tauriLibraries;
   };
 }
