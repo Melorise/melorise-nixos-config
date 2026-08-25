@@ -138,6 +138,8 @@ programs.clash-verge = {
 
 不要把同一软件的相关配置无必要地分散到多个文件或多个不相邻的属性块中。
 
+非必要不增加模块；现有分类文件能够合理承载配置时，必须直接修改现有文件。
+
 ### Home Manager 的分类优先级
 
 用户级基础环境配置放入 `home/tippy/config/`；用户态软件先判断是否与开发相关。开发相关的软件与配置放入 `home/tippy/development/`；日常软件和其他普通软件放入 `home/tippy/packages/`。
@@ -211,7 +213,7 @@ programs.clash-verge = {
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
-- `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer。Rust 相关内容应集中在这里。
+- `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer；为 Tauri 等依赖 D-Bus 的 Rust 项目提供 pkg-config、`dbus.dev` 与 `dbus-1.pc` 搜索路径。Rust 相关内容应集中在这里。
 - `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
 - `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
 - `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。
