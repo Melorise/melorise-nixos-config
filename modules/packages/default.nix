@@ -49,5 +49,7 @@
     gdb
     unzip
     zip
+
+    mission-center
   ];
 }
