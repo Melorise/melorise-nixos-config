@@ -70,7 +70,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   ├── ide.nix                   IDE 类用户软件
 │   │   ├── nodejs.nix                Node.js 与 npm 用户配置
 │   │   ├── python.nix                Python 3.14 用户环境
-│   │   ├── rust.nix                  Rust 工具链与开发环境
+│   │   ├── rust.nix                  通用 Rust 基础工具链
 │   │   └── ssh.nix                   SSH 用户配置
 │   └── packages/                     日常及其他普通用户软件
 │       ├── packages.nix              稳定版通用用户软件
@@ -154,7 +154,9 @@ programs.clash-verge = {
    - IDE 相关软件放入 `development/ide.nix`。
    - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
    - Python 解释器及相关环境配置放入 `development/python.nix`。
-   - Rust 工具链与相关配置放入 `development/rust.nix`。
+   - Rust 的全局用户环境只保留 cargo、rustc、rustfmt、clippy 与 rust-analyzer 等通用基础工具，配置放入 `development/rust.nix`。
+   - Tauri 等额外 Rust 技术栈使用实际家目录 `~/DevTemplates/<技术栈>/` 下由 direnv 管理的项目级开发环境模板，不通过 Home Manager 映射，也不在本仓库保存模板副本。
+   - `~/DevTemplates/` 下 Rust 项目模板的 Flake 输入统一使用 `github:Melorise/nixpkgs/nixos-unstable`；模板不预先生成锁定文件，使用时由用户复制到具体项目并自行初始化。
    - Git 配置放入 `development/git.nix`。
    - SSH 配置放入 `development/ssh.nix`。
    - 后续出现新的开发类别时，应在 `development/` 下新建语义清晰的专用文件，并在 `home/tippy/default.nix` 中导入。
@@ -216,7 +218,7 @@ programs.clash-verge = {
 - `home/tippy/development/ide.nix`：IDE 类用户软件，当前从 `pkgs-unstable` 安装带 FHS 兼容环境的 VS Code。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
-- `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer；为 Tauri 2 的 Linux 开发引用 GTK3、WebKitGTK 4.1、D-Bus、GLib、HarfBuzz、zlib、AppIndicator 等系统库，由 Nixpkgs 的 xdotool 提供 libxdo，并统一生成包含 `lib/pkgconfig` 与 `share/pkgconfig` 的 pkg-config 搜索路径及运行时库搜索路径。Tauri 库不直接加入 `home.packages`，避免 Home Manager 合并库输出时产生文件冲突。Rust 相关内容应集中在这里。
+- `home/tippy/development/rust.nix`：Rust 用户环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer。Tauri 等额外技术栈不加入全局会话，改用实际家目录 `~/DevTemplates/<技术栈>/` 下由 direnv 管理的项目级模板；当前 Tauri 模板位于 `~/DevTemplates/tauri/`，其 Flake 跟随 `github:Melorise/nixpkgs/nixos-unstable`。
 - `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
 - `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
 - `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。

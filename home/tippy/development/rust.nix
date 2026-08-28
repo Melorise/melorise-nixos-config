@@ -1,27 +1,5 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 
-let
-  # Tauri 2 在 Linux 上使用 GTK3、WebKitGTK 4.1，并由各 -sys crate 通过
-  # pkg-config 查找对应的 C 库。列表同时用于生成编译期与运行期搜索路径。
-  tauriLibraries = with pkgs; [
-    at-spi2-core
-    cairo
-    dbus
-    gdk-pixbuf
-    glib
-    gtk3
-    harfbuzz
-    libayatana-appindicator
-    librsvg
-    libsoup_3
-    # Nixpkgs 的 xdotool 包同时提供 Tauri 所需的 libxdo。
-    xdotool
-    openssl
-    pango
-    webkitgtk_4_1
-    zlib
-  ];
-in
 {
   # 用 Home Manager 配置项安装 cargo 并管理 ~/.cargo/config.toml
   programs.cargo = {
@@ -30,18 +8,9 @@ in
   };
 
   home.packages = with pkgs; [
-    pkg-config
     rustc
     rustfmt
     clippy
     rust-analyzer
   ];
-
-  home.sessionVariables = {
-    PKG_CONFIG_PATH = lib.concatStringsSep ":" [
-      (lib.makeSearchPathOutput "dev" "lib/pkgconfig" tauriLibraries)
-      (lib.makeSearchPathOutput "dev" "share/pkgconfig" tauriLibraries)
-    ];
-    LD_LIBRARY_PATH = lib.makeLibraryPath tauriLibraries;
-  };
 }
