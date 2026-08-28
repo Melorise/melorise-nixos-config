@@ -24,6 +24,12 @@
   # 用于自动进入开发环境的direnv
   programs.direnv.enable = true;
 
+  # 支持运行 AppImage，并通过 binfmt 允许直接执行 .AppImage 文件
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
   environment.systemPackages = with pkgs; [
     vim
     wget
