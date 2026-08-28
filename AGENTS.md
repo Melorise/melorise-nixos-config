@@ -67,6 +67,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   ├── development/                  开发相关软件与配置
 │   │   ├── ai-agent.nix              AI agent 类用户软件
 │   │   ├── git.nix                   Git 用户配置
+│   │   ├── ide.nix                   IDE 类用户软件
 │   │   ├── nodejs.nix                Node.js 与 npm 用户配置
 │   │   ├── python.nix                Python 3.14 用户环境
 │   │   ├── rust.nix                  Rust 工具链与开发环境
@@ -150,6 +151,7 @@ programs.clash-verge = {
    - Zsh、命令补全与 Powerlevel10k 配置放入 `config/zsh.nix`。
 2. 开发相关的软件与配置放入 `development/` 下的对应专用文件。
    - AI agent 相关软件放入 `development/ai-agent.nix`。
+   - IDE 相关软件放入 `development/ide.nix`。
    - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
    - Python 解释器及相关环境配置放入 `development/python.nix`。
    - Rust 工具链与相关配置放入 `development/rust.nix`。
@@ -211,6 +213,7 @@ programs.clash-verge = {
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
 - `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，ChatGPT 应用使用 `pkgs-thirdParty.chatgpt`；desktop entry 由新版上游 Nix 包直接提供。后续同类软件均放在这里。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
+- `home/tippy/development/ide.nix`：IDE 类用户软件，当前从 `pkgs-unstable` 安装带 FHS 兼容环境的 VS Code。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。Node.js 相关内容应集中在这里。
 - `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
 - `home/tippy/development/rust.nix`：Rust 开发环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer；为 Tauri 2 的 Linux 开发引用 GTK3、WebKitGTK 4.1、D-Bus、GLib、HarfBuzz、zlib、AppIndicator 等系统库，由 Nixpkgs 的 xdotool 提供 libxdo，并统一生成包含 `lib/pkgconfig` 与 `share/pkgconfig` 的 pkg-config 搜索路径及运行时库搜索路径。Tauri 库不直接加入 `home.packages`，避免 Home Manager 合并库输出时产生文件冲突。Rust 相关内容应集中在这里。
