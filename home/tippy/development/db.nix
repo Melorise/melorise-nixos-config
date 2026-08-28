@@ -1,13 +1,7 @@
-{ pkgs, ... }:
-
-let
-  dbx = pkgs.dbx.override {
-    python3 = pkgs.python313;
-  };
-in
+{ pkgs-thirdParty, ... }:
 
 {
   home.packages = [
-    dbx
+    pkgs-thirdParty.dbx
   ];
 }
