@@ -66,6 +66,7 @@ AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在�
 │   │   └── zsh.nix                   Zsh、命令补全与 Powerlevel10k 配置
 │   ├── development/                  开发相关软件与配置
 │   │   ├── ai-agent.nix              AI agent 类用户软件
+│   │   ├── db.nix                    dbx 用户工具
 │   │   ├── git.nix                   Git 用户配置
 │   │   ├── ide.nix                   IDE 类用户软件
 │   │   ├── nodejs.nix                Node.js 与 npm 用户配置
@@ -214,6 +215,7 @@ programs.clash-verge = {
 - `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全、语法高亮和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
 - `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
 - `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，ChatGPT 应用使用 `pkgs-thirdParty.chatgpt`；desktop entry 由新版上游 Nix 包直接提供。后续同类软件均放在这里。
+- `home/tippy/development/db.nix`：通过稳定版包集安装 `dbx` 用户工具。
 - `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
 - `home/tippy/development/ide.nix`：IDE 类用户软件，当前从 `pkgs-unstable` 安装带 FHS 兼容环境的 VS Code。
 - `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。Node.js 相关内容应集中在这里。

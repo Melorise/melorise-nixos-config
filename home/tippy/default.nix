@@ -14,6 +14,7 @@
     ./development/nodejs.nix
     ./development/python.nix
     ./development/rust.nix
+    ./development/db.nix
     ./development/ide.nix
     ./development/ai-agent.nix
     ./packages/packages.nix
