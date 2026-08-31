@@ -13,6 +13,10 @@
     "C /var/lib/linglong/config.yaml 0644 deepin-linglong deepin-linglong - ${pkgs-unstable.linyaps}/share/linglong/config.yaml"
   ];
 
+  systemd.services."org.deepin.linglong.PackageManager".wantedBy = [
+    "multi-user.target"
+  ];
+
   programs.steam = {
     enable = true;
     protontricks.enable = true;
