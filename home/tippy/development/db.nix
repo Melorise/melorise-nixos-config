@@ -2,6 +2,6 @@
 
 {
   home.packages = [
-    pkgs-thirdParty.dbx
+    #pkgs-thirdParty.dbx
   ];
 }

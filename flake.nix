@@ -10,11 +10,6 @@
       "github:Melorise/nixpkgs/nixos-unstable";
       #git+https://mirrors.nju.edu.cn/git/nixpkgs.git?ref=nixos-unstable&shallow=1;
 
-    dbx = {
-      url = "github:t8y2/dbx";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
     home-manager = {
       url =
         "github:nix-community/home-manager/release-26.05";
@@ -28,8 +23,7 @@
     };
 
     amber-pm = {
-      url =
-        "git+https://gitee.com/Melorise/amber-pm.git?ref=nixos";
+      url = "github:Melorise/amber-pm/nixos";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -41,7 +35,7 @@
     };
 
     spark-store = {
-      url = "git+https://gitee.com/Melorise/spark-store.git?ref=nixos";
+      url = "github:Melorise/spark-store/nixos";
       flake = false;
     };
 
@@ -79,9 +73,6 @@
         })
         (_final: _prev: {
           meloasr = inputs.meloasr.packages.${system}.meloasr;
-        })
-        (_final: _prev: {
-          dbx = inputs.dbx.packages.${system}.default;
         })
         (final: _prev: {
           spark-store = final.callPackage "${inputs.spark-store}/nix/package.nix" {
