@@ -23,6 +23,6 @@
   };
 
   environment.systemPackages = [
-    pkgs-thirdParty.meloasr
+    pkgs-thirdParty.tama-asr
   ];
 }

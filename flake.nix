@@ -51,7 +51,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    meloasr.url = "github:Melorise/MeloASR";
+    tama-asr.url = "github:Melorise/TamaASR";
   };
 
 
@@ -72,7 +72,7 @@
           chatgpt = inputs.chatgpt.packages.${system}.chatgpt;
         })
         (_final: _prev: {
-          meloasr = inputs.meloasr.packages.${system}.meloasr;
+          tama-asr = inputs.tama-asr.packages.${system}.tama-asr;
         })
         (final: _prev: {
           spark-store = final.callPackage "${inputs.spark-store}/nix/package.nix" {
