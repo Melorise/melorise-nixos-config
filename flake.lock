@@ -24,7 +24,7 @@
     "asn": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-9flRdjU5Ak/D+ITwe1GuFIdgcncC2cyyKcYiZxuazs0=",
+        "narHash": "sha256-L77FbfkEq0UJs+F/5/+6tRuOv62K7xu6tSfPz2B3mF0=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
       },
@@ -58,7 +58,7 @@
     "chatgpt-deb": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-2uP50GXM2H52dTRB0yEjhYhv/F7l0jLoNbk2Mm8JnBI=",
+        "narHash": "sha256-J6NJIYu0NXiz7914pE0dx7M6WjxTK5Q+Uh3b6PBnvnM=",
         "type": "file",
         "url": "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb"
       },
@@ -79,11 +79,11 @@
         "sysproxy": "sysproxy"
       },
       "locked": {
-        "lastModified": 1788108732,
-        "narHash": "sha256-7NcsOUXoG7mnFn01Aiavg9+0e5cI2c1XT9apeGTYQ6s=",
+        "lastModified": 1788699293,
+        "narHash": "sha256-wiFjBzJYPduXeKFJxAyzz5i13sXzIFl+ZUPg0NMC8sQ=",
         "owner": "Melorise",
         "repo": "cp-nix",
-        "rev": "9b87f12e7ba055f83b0d87c962f9d89a4b223714",
+        "rev": "2bf8e9474713d42d77c830678fac18c9aa678774",
         "type": "github"
       },
       "original": {
@@ -113,7 +113,7 @@
     "country": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-bCBAJrFACEiYoZcv1KghAGOrauaH+cSncnOrjOE551I=",
+        "narHash": "sha256-uVQtLsY7GQWUrI1DmynEzyhzbEkXB846TvzwlrgJJJw=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
       },
@@ -141,7 +141,7 @@
     "geoip": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-oiRX3yj0KyFAa0n65jLZFUdwwRJyhdWxbz1aglEdCAY=",
+        "narHash": "sha256-x8RZq7TbggHCBVkAh3IW7un/g83wJANtIWVmyk2VU5g=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
       },
@@ -153,7 +153,7 @@
     "geosite": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-nG0wx8phtA4zhcUc5P0vmamKWG57aoKbHlc3R9/lHR4=",
+        "narHash": "sha256-Bc8HJX+ZwKL+GsC0LvWfZ5fxMd6OyQ/dSsH3AjQthKU=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
       },
@@ -169,11 +169,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787377438,
-        "narHash": "sha256-Sxu1NLTD/Ern6hFGLlZmtKCSct3YQXZI/lls8RE1XeM=",
+        "lastModified": 1788642154,
+        "narHash": "sha256-sPpQFVaFTDqO/4vvCAhuAhqTgqN/ygu+9eJcs5eB0js=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "65258d5c65a250189fde2e35f490d15e064c4c62",
+        "rev": "fd0956c99c41ae3c13a73a638f1f7e963aebc4ab",
         "type": "github"
       },
       "original": {
@@ -183,28 +183,10 @@
         "type": "github"
       }
     },
-    "meloasr": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1788108567,
-        "narHash": "sha256-S3wbG2npBTYUGDuJor8ZacMQMUGZ8WtXnm0hx035aJA=",
-        "owner": "Melorise",
-        "repo": "MeloASR",
-        "rev": "ed1bf16e2490711870a38265e6f84943c09766ca",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Melorise",
-        "repo": "MeloASR",
-        "type": "github"
-      }
-    },
     "metadb": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-BzccePYUacidCs35HMszsInQg3emnH5UyVfQ3i7nGpI=",
+        "narHash": "sha256-s6bKQXopN0IKAX2jk4nWWUUZWKW9m915XgL1MJ0Vtgk=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
       },
@@ -237,11 +219,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1788107362,
-        "narHash": "sha256-pKxqcA71wmW6eMh3kFpW5NHIdbrgYOhtW2aOwqQ28GQ=",
+        "lastModified": 1788283238,
+        "narHash": "sha256-iFgPO6h9A+vvC8auAY2DBJv1t01vRRS6EWbUUqmEh0c=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "e1c33116d631fcc7987a1a6b298622523ce1d66a",
+        "rev": "800023974a51c7b559d9ae8c489f3de3abdb14f0",
         "type": "github"
       },
       "original": {
@@ -253,11 +235,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1788107362,
-        "narHash": "sha256-pKxqcA71wmW6eMh3kFpW5NHIdbrgYOhtW2aOwqQ28GQ=",
+        "lastModified": 1788283238,
+        "narHash": "sha256-iFgPO6h9A+vvC8auAY2DBJv1t01vRRS6EWbUUqmEh0c=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "e1c33116d631fcc7987a1a6b298622523ce1d66a",
+        "rev": "800023974a51c7b559d9ae8c489f3de3abdb14f0",
         "type": "github"
       },
       "original": {
@@ -269,32 +251,32 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1788107362,
-        "narHash": "sha256-pKxqcA71wmW6eMh3kFpW5NHIdbrgYOhtW2aOwqQ28GQ=",
+        "lastModified": 1788283186,
+        "narHash": "sha256-Zf916YzwU7Zl2S76W9KUD7E5R5KXosVYuO7QKvgPtN0=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "e1c33116d631fcc7987a1a6b298622523ce1d66a",
+        "rev": "36d520abd54512c5144a655bd12f905f88f5a430",
         "type": "github"
       },
       "original": {
         "owner": "Melorise",
-        "ref": "nixos-unstable",
+        "ref": "nixos-26.05",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1788107312,
-        "narHash": "sha256-zFhQb5/UMfkF3SjErrFTxsUt5QHlFKMrGwxklKitZEE=",
+        "lastModified": 1788283238,
+        "narHash": "sha256-iFgPO6h9A+vvC8auAY2DBJv1t01vRRS6EWbUUqmEh0c=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "94ee9eefef9f60db32df168f5d31c490aa0fe1ff",
+        "rev": "800023974a51c7b559d9ae8c489f3de3abdb14f0",
         "type": "github"
       },
       "original": {
         "owner": "Melorise",
-        "ref": "nixos-26.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -326,13 +308,13 @@
         "chatgpt": "chatgpt",
         "clash-party": "clash-party",
         "home-manager": "home-manager",
-        "meloasr": "meloasr",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "npanel": "npanel",
         "spark-store": "spark-store",
-        "spark-winfonts": "spark-winfonts"
+        "spark-winfonts": "spark-winfonts",
+        "tama-asr": "tama-asr"
       }
     },
     "spark-store": {
@@ -388,6 +370,24 @@
         "owner": "mihomo-party-org",
         "ref": "main",
         "repo": "sysproxy-rs-opti",
+        "type": "github"
+      }
+    },
+    "tama-asr": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1788531812,
+        "narHash": "sha256-Qm0CnkxsSH3ttLLgrZ56Lt5c5b1nwwOR0NdQtsGNflU=",
+        "owner": "Melorise",
+        "repo": "TamaASR",
+        "rev": "3a5b5d84ff4e81788ff027cee2b7dadb321924f2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Melorise",
+        "repo": "TamaASR",
         "type": "github"
       }
     },
