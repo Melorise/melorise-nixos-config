@@ -17,7 +17,7 @@
     { device = "/dev/disk/by-uuid/5c36a4a5-c30e-40da-8397-289564406078";
       fsType = "btrfs";
       options = [
-      "compress=zstd:3"
+      "compress-force=zstd:3"
       "noatime"
       ];
     };
@@ -25,13 +25,13 @@
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/5c36a4a5-c30e-40da-8397-289564406078";
       fsType = "btrfs";
-      options = [ "subvol=home" "compress=zstd:3" "noatime" ];
+      options = [ "subvol=home" "compress-force=zstd:3" "noatime" ];
     };
 
   fileSystems."/nix" =
     { device = "/dev/disk/by-uuid/5c36a4a5-c30e-40da-8397-289564406078";
       fsType = "btrfs";
-      options = [ "subvol=nix" "compress=zstd:3" "noatime"];
+      options = [ "subvol=nix" "compress-force=zstd:3" "noatime" ];
     };
 
   swapDevices =
@@ -41,4 +41,3 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
-

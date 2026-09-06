@@ -17,35 +17,35 @@
   imports = [
     ./hardware-configuration.nix
 
-    ../../modules/hardware/networking.nix
-    ../../modules/desktops/locale.nix
-    ../../modules/desktops/fonts.nix
-    ../../modules/desktops/cinnamon.nix
+    ../../modules/networking/physical.nix
+    ../../modules/desktop/locale.nix
+    ../../modules/desktop/fonts.nix
+    ../../modules/desktop/cinnamon.nix
     ../../modules/hardware/audio.nix
-    ../../modules/hardware/filesystems.nix
-    ../../modules/server/docker.nix
-    ../../modules/server/npanel.nix
-    ../../modules/hardware/gc.nix
-    ../../modules/hardware/zram.nix
     ../../modules/hardware/nvidia.nix
+    ../../modules/storage/ntfs.nix
+    ../../modules/storage/zram.nix
+    ../../modules/services/docker.nix
+    ../../modules/services/npanel.nix
+    ../../modules/nix/settings.nix
+    ../../modules/nix/gc.nix
     ../../modules/users/tippy.nix
-    ../../modules/packages/default.nix
-    ../../modules/packages/desktop-packages.nix
-    ../../modules/packages/clash.nix
-    ../../modules/packages/spark-store.nix
+    ../../modules/packages/base.nix
+    ../../modules/packages/development.nix
+    ../../modules/packages/mission-center.nix
+    ../../modules/programs/direnv.nix
+    ../../modules/programs/appimage.nix
+    ../../modules/programs/linyaps.nix
+    ../../modules/programs/steam.nix
+    ../../modules/programs/tama-asr.nix
+    ../../modules/programs/clash.nix
+    ../../modules/programs/spark-store.nix
   ];
 
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-
-    trusted-users = [
-      "root"
-      "tippy"
-    ];
-  };
+  nix.settings.trusted-users = [
+    "root"
+    "tippy"
+  ];
 
   system.stateVersion = "26.05";
 }

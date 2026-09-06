@@ -1,239 +1,166 @@
-# 个人NixOS配置
+# 个人 NixOS 配置
 
-这是我的个人nixos配置，使用nix flakes + home manager管理。当前NixOS版本为26.05。
+这是我的个人 NixOS 配置，使用 Nix Flakes 和 Home Manager 管理。当前 NixOS 版本为 26.05。
 
 ## 你需要协助我管理，但不能越权
-当我要求你进行修改时，你必须向我汇报你的改动计划。   
-未经我明确的对话进行授权确认你的计划，严禁进行修改。
-绝对禁止汇报个计划就自动开始动工而未收到我的确认指令。    
 
-你只允许改动文件本身。绝对禁止自行执行nix flake lock, nix flake update, nixos-rebuild等任何指令。  
+当我要求你修改配置时，必须先汇报完整改动计划。未经我在对话中明确确认该计划，严禁修改文件，不能汇报计划后自动开始动工。
 
-`flake.lock` 是由 Nix 自动生成的锁定文件，绝对禁止手工编辑、替换、重排或以任何方式修改。禁止执行 `nix flake lock`、`nix flake update` 等命令，不构成手工修改 `flake.lock` 的许可；配置源码与 `flake.lock` 必须作为独立 Git 改动处理，锁文件只由用户自行执行 Nix 命令生成。
+只允许修改文件本身。严禁自行执行 `nix flake lock`、`nix flake update`、`nixos-rebuild` 等 Nix 构建、更新或应用命令。
 
-不论提交什么，`flake.lock` 一律直接排除，不得读取、检查、验证、暂存或修改它。禁止以“事务闭合”、输入图一致性、版本配套或任何类似理由对该文件进行手工操作；一旦发现当前任务中的 agent 已手工改动该文件，立即停止全部相关操作，并询问用户应如何处理。用户自行执行 Nix 命令后留下的未提交锁文件改动不属于此情形，必须原样保留。
+`flake.lock` 是由 Nix 自动生成的锁定文件，绝对禁止手工编辑、替换、重排或以任何方式修改。无论任务内容是什么，一律不得读取、检查、验证、暂存或修改 `flake.lock`。配置源码与锁文件必须作为独立 Git 改动处理，锁文件只由用户自行执行 Nix 命令生成。若当前任务中的 agent 已手工改动该文件，必须立即停止相关操作并询问用户如何处理；用户自行执行 Nix 命令留下的未提交锁文件改动必须原样保留。
 
-每次更改，提交git commit,但不要推送到远程。  
+每次完成更改后必须创建 Git commit，但不要推送到远程。暂存时显式指定本次修改的文件，不得暂存 `flake.lock`。
 
-如果有内容变化或文件新增，更新AGENTS.md并拷贝一份到CLAUDE.md。   
+如果有内容变化或新增文件，必须更新 `AGENTS.md`，并将相同内容同步到 `CLAUDE.md`。
 
-AGENTS.md的结构概览只存放简单的文件描述。具体详情请写在文件说明里。
+`AGENTS.md` 的结构概览只保存简短文件职责；具体配置详情写在文件说明中。
+
+## 目录与模块边界
+
+### 系统配置
+
+- `hosts/` 只保存每台设备的 NixOS 入口和硬件配置。每个 `hosts/<设备>/default.nix` 必须显式导入该设备需要的系统模块，使设备最终启用的系统功能可以直接阅读。
+- `modules/` 只保存可复用的 NixOS 系统模块，禁止放入 Home Manager 配置或普通用户的软件选择。
+- 系统模块按实际职责分类：桌面、硬件、网络、Nix、系统包、程序集成、服务、存储和系统用户。
+- 不建立隐藏设备选择的通用 system profile。只有确实始终作为同一功能使用的配置才能放在同一个系统模块中。
+- `hardware-configuration.nix` 保存设备扫描得到的硬件、文件系统和 UUID。通常不修改；若挂载策略本身是明确需求，例如 Btrfs 压缩参数，可以在用户确认后修改。
+
+### Home Manager 配置
+
+- `home/modules/` 保存跨用户、跨设备复用的 Home Manager 模块。共享模块不得硬编码用户名、家目录、主机名或设备判断。
+- `home/users/` 只保存用户身份，包括用户名、家目录和 Home Manager state version，不负责选择软件。
+- `home/profiles/<设备>/<用户>.nix` 是用户态功能的唯一组合入口，必须显式导入该设备上该用户需要的 Home Manager 模块。
+- Home profile 禁止声明 NixOS 系统选项；`hosts/` 和 `modules/` 也禁止编排 Home Manager 用户模块。
+- 同一个用户在不同设备上的 profile 可以拥有不同软件集合；不同用户也必须复用 `home/modules/` 中相同的功能模块，禁止复制整棵用户配置。
+
+### Flake 职责
+
+- `flake.nix` 负责声明输入、构造包集、创建 NixOS configuration，并将系统主机与对应的 Home profile 配对。
+- `flake.nix` 不替主机选择具体系统功能，也不替 Home profile 选择用户软件。
+- 第三方 NixOS module 应由使用它的本地系统功能模块导入；不要在 Flake 中向所有设备全局注入，也不要维护与业务模块分离的 `extraNixosModules` 列表。
+
+### 模块拆分与软件放置
+
+- 系统态与 Home Manager 的管理边界由软件的实际用途决定，不能为了共享或目录对称而改变管理层级。
+- 普通用户态软件原则上由 Home Manager 管理。需要系统服务、系统权限、网络/TUN、Polkit、显示管理器、文件系统或其他 NixOS 集成的软件保留在系统态。
+- 优先使用 NixOS 或 Home Manager 已提供的配置项；只有没有合适配置项时才加入 `environment.systemPackages` 或 `home.packages`。
+- 软件版本来源是模块内部实现细节。禁止以 stable、unstable 或第三方来源作为目录和文件分类，禁止重新建立 `packages-unstable.nix` 一类文件。
+- 多个包只有在所有设备上都作为同一选择单元时才能放入同一个模块。会被设备独立取舍的软件必须拆为独立模块。
+- 禁止重新建立类似旧 `modules/packages/default.nix` 的综合模块。Nix 设置、基础工具链、开发工具链、AppImage、direnv 和桌面应用必须分别维护。
+- 新增模块前先检查现有功能模块。只有出现新的独立选择单元时才新建文件，避免无意义的一包一文件。
+- 同一软件的安装、开关、服务和相关设置应集中在同一文件、同一属性块中，并优先使用嵌套属性。
 
 ## 结构概览
 
 ```text
 .
-├── flake.nix                         Flake 入口；定义包集、第三方上游与 nPanel、TamaASR 输入、缓存、第三方聚合和三台设备输出
+├── flake.nix                         Flake 输入、包集、主机构造和 Home profile 配对
 ├── flake.lock                        Flake 输入版本锁定文件
-├── AGENTS.md                         Codex 协作与仓库维护规范
-├── CLAUDE.md                         Claude 协作规范
-├── README.md                         项目简介与常用维护命令
+├── AGENTS.md                         Codex 协作、目录和配置维护规范
+├── CLAUDE.md                         与 AGENTS.md 同步的 Claude 协作规范
+├── README.md                         项目简介与用户手动执行的维护命令
 ├── hosts/
-│   ├── desktop/
-│   │   ├── default.nix               台式机设备配置、Nix 信任用户与 GRUB 设置
-│   │   └── hardware-configuration.nix 台式机硬件/磁盘生成配置
-│   ├── asus/
-│   │   ├── default.nix               华硕设备配置、Nix 信任用户与 GRUB/Windows 探测设置
-│   │   └── hardware-configuration.nix 华硕硬件/磁盘生成配置
-│   └── wsl/
-│       └── default.nix               NixOS-WSL 配置、默认用户与 WSL 专用系统模块
+│   ├── desktop/                      台式机系统入口与硬件配置
+│   ├── asus/                         ASUS 系统入口与硬件配置
+│   ├── hp/                           HP 系统入口与 Btrfs 硬件配置
+│   └── wsl/                          NixOS-WSL 系统入口
 ├── modules/
-│   ├── hardware/                     硬件与底层系统资源配置
-│   │   ├── audio.nix                 PipeWire 音频配置
-│   │   ├── filesystems.nix           文件系统与 UDisks 配置
-│   │   ├── gc.nix                    Nix 自动垃圾回收配置
-│   │   ├── networking.nix            网络与本地 DNS 配置
-│   │   ├── nvidia.nix                ASUS NVIDIA 显卡配置
-│   │   └── zram.nix                  zram 压缩交换空间配置
-│   ├── desktops/                     桌面环境与本地化配置
-│   │   ├── cinnamon.nix              Cinnamon 桌面配置
-│   │   ├── fonts.nix                 系统字体安装与默认字体配置
-│   │   └── locale.nix                中文 locale 与输入法配置
-│   ├── packages/                     系统级软件及其集成配置
-│   │   ├── default.nix               通用系统软件配置
-│   │   ├── desktop-packages.nix      物理机桌面专用软件配置
-│   │   ├── clash.nix                 物理机 Clash Party 与 Clash Verge 配置
-│   │   └── spark-store.nix           Amber PM 与 Spark Store 集成
-│   ├── users/
-│   │   ├── nixos.nix                 nixos 系统用户配置
-│   │   └── tippy.nix                 tippy 系统用户配置
-│   └── server/                       系统级服务配置
-│       ├── docker.nix                Docker 与 Docker Compose 环境
-│       └── npanel.nix                ASUS nPanel 测试服务
-├── home/tippy/
-│   ├── default.nix                   物理机 tippy 的 Home Manager 用户配置入口
-│   ├── config/                       用户级基础环境配置
-│   │   └── zsh.nix                   Zsh、命令补全与 Powerlevel10k 配置
-│   ├── development/                  开发相关软件与配置
-│   │   ├── ai-agent.nix              AI agent 类用户软件
-│   │   ├── db.nix                    dbx 用户工具
-│   │   ├── git.nix                   Git 用户配置
-│   │   ├── ide.nix                   IDE 类用户软件
-│   │   ├── nodejs.nix                Node.js 与 npm 用户配置
-│   │   ├── python.nix                Python 3.14 用户环境
-│   │   ├── rust.nix                  通用 Rust 基础工具链
-│   │   └── ssh.nix                   SSH 用户配置
-│   └── packages/                     日常及其他普通用户软件
-│       ├── packages.nix              稳定版通用用户软件
-│       └── packages-unstable.nix     unstable 通用用户软件
-└── home/nixos/
-    ├── default.nix                   WSL nixos 用户的 Home Manager 配置入口
-    ├── config/                       WSL 用户级基础环境配置
-    │   └── zsh.nix                   WSL 用户的 Zsh、补全与 Powerlevel10k 配置
-    ├── development/                  WSL 用户需要的开发工具与配置
-    │   ├── ai-agent.nix              CLI AI agent 软件
-    │   ├── git.nix                   Git 用户配置
-    │   ├── nodejs.nix                Node.js 与 npm 用户配置
-    │   ├── python.nix                Python 3.14 用户环境
-    │   ├── rust.nix                  Rust 工具链与开发环境
-    │   └── ssh.nix                   SSH 用户配置
-    └── packages/
-        └── packages.nix              WSL 用户的终端基础软件
+│   ├── desktop/                      桌面环境、字体和本地化系统模块
+│   ├── hardware/                     音频与设备专用硬件模块
+│   ├── networking/                   物理机网络策略模块
+│   ├── nix/                          Nix daemon 设置与垃圾回收模块
+│   ├── packages/                     系统基础包和开发工具链模块
+│   ├── programs/                     需要 NixOS 集成的程序模块
+│   ├── services/                     Docker、nPanel、打印等系统服务
+│   ├── storage/                      文件系统、zram 和去重模块
+│   └── users/                        NixOS 系统用户定义
+└── home/
+    ├── modules/                      可复用的 Home Manager 功能模块
+    ├── users/                        Home Manager 用户身份
+    └── profiles/                     各设备与用户的用户态功能组合
 ```
-
-## 配置分层
-
-- `hosts/` 和 `modules/` 是 NixOS 系统级配置。
-- `home/tippy/` 是物理机 `tippy` 用户的 Home Manager 配置；`home/nixos/` 是 WSL `nixos` 用户的独立 Home Manager 配置，二者不得交叉导入。
-- 绝大部分用户态软件应安装在 Home Manager。
-- 系统级仅安装少量通用软件，或必须依赖系统服务、系统权限、网络/TUN、桌面服务等 NixOS 配置的软件。
-- 新增用户态软件时，按目标主机放入对应的 Home Manager 配置；WSL 软件放入 `home/nixos/`，不要因为方便而直接添加到 `modules/packages/default.nix`。
-- 需要 NixOS 系统集成且仅用于图形桌面的软件放入 `modules/packages/desktop-packages.nix`，并只由物理机导入。
 
 ## 包集与第三方来源
 
-- `pkgs` 是 NixOS 稳定版包集，`pkgs-unstable` 是 unstable 包集。
-- 所有不在 nixpkgs 的第三方软件包都通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，不要为每个第三方 Flake input 增加模块参数。后续接入其他第三方来源时，应向该 overlay 列表追加来源提供的 overlay 或必要的本地适配 overlay。
-- Amber PM、Clash Party、ChatGPT、TamaASR、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input 锁定。对于存在缓存源的包，不要为这些输入添加 `nixpkgs.follows`，也不通过 `overrideAttrs` 改写上游包，以保持上游缓存命中。对于没有缓存源的包，必须添加 `nixpkgs.follows`以减少占用。
-- 上游提供的 overlay 直接加入 `thirdPartyOverlays`；没有 overlay 的 Flake 包由本地轻量 overlay 映射其确切输出。Spark Store 不是 Flake，统一在该 overlay 列表中调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。各业务模块继续只接收单一的 `pkgs-thirdParty` 参数。
-- 公共上游 NixOS module 由 `thirdPartyNixosModules` 统一聚合，当前包含 Amber PM 的 `nixosModules.default`；仅桌面机与 ASUS 通过 `mkHost.extraNixosModules` 注入 Clash Party 的 `nixosModules.clash-party`，仅 WSL 主机注入 NixOS-WSL 的 `nixosModules.default`。只向相应主机加入实际使用的模块。
-- CERNET Nixpkgs 镜像，以及 Clash Party 和 TamaASR 的 Cachix URL 与公钥，统一在 `modules/packages/default.nix` 的持久 `nix.settings` 中配置。TamaASR 继续使用旧名称的 `meloasr.cachix.org` 缓存。缓存会在切换该世代后由 Nix daemon 使用，不依赖接受顶层 Flake 配置。
-- Spark Winfonts 通过 `pkgs-thirdParty` 安装，不引入其 NixOS module；默认字体族继续由本地字体模块显式固定。ChatGPT 应用在 Home Manager 的 `development/ai-agent.nix` 中通过 `pkgs-thirdParty.chatgpt` 安装，并使用上游新版 `nix` 分支自带的 desktop entry；Clash Party 与 Clash Verge 在 `modules/packages/clash.nix` 中配置，并只由桌面机与 ASUS 导入。
+- `pkgs` 是 NixOS 26.05 稳定包集，`pkgs-unstable` 是 unstable 包集。
+- 所有不在 nixpkgs 的第三方软件包通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，业务模块只接收单一的 `pkgs-thirdParty` 参数。
+- Amber PM、Clash Party、ChatGPT、TamaASR、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input。
+- 对存在上游缓存的软件，不增加 `nixpkgs.follows`，不使用 `overrideAttrs` 改写上游包，以保留缓存命中。没有缓存的输入应跟随现有 nixpkgs 输入以减少闭包占用。
+- Spark Store 不是 Flake，由 `thirdPartyOverlays` 调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。
+- CERNET Nixpkgs 镜像、Clash Party 和 TamaASR Cachix 地址及公钥统一由 `modules/nix/settings.nix` 配置。TamaASR 继续使用旧名称 `meloasr.cachix.org`。
+- Clash Party、Amber PM、nPanel 和 NixOS-WSL 的上游 NixOS module 分别由实际使用它们的系统模块或主机入口导入。
 
-## 软件与配置的放置规则
+## 主机与 Home profile 对应关系
 
-### 优先使用模块配置项
-
-如果 NixOS 或 Home Manager 已提供对应的软件配置项，应优先使用配置项启用和配置软件，而不是只把软件包加入 `home.packages` 或 `environment.systemPackages`。
-
-例如：
-
-```nix
-programs.firefox.enable = true;
-```
-
-配置项能同时表达软件安装和相关服务、默认设置或集成逻辑时，应优先使用这种方式。
-
-### 配置按软件聚合并优先嵌套
-
-同一软件的安装、开关和相关设置应集中在同一个文件、同一个属性块中，优先使用嵌套属性表达层级关系。
-
-例如 Clash Verge 的全部系统级设置集中在一起：
-
-```nix
-programs.clash-verge = {
-  enable = true;
-  tunMode = true;
-  serviceMode = true;
-};
-```
-
-不要把同一软件的相关配置无必要地分散到多个文件或多个不相邻的属性块中。
-
-非必要不增加模块；现有分类文件能够合理承载配置时，必须直接修改现有文件。
-
-### Home Manager 的分类优先级
-
-用户级基础环境配置放入 `home/tippy/config/`；用户态软件先判断是否与开发相关。开发相关的软件与配置放入 `home/tippy/development/`；日常软件和其他普通软件放入 `home/tippy/packages/`。
-
-分类顺序如下：
-
-1. Shell 等用户级基础环境配置放入 `config/` 下的对应专用文件。
-   - Zsh、命令补全与 Powerlevel10k 配置放入 `config/zsh.nix`。
-2. 开发相关的软件与配置放入 `development/` 下的对应专用文件。
-   - AI agent 相关软件放入 `development/ai-agent.nix`。
-   - IDE 相关软件放入 `development/ide.nix`。
-   - Node.js 相关软件和 npm 环境变量放入 `development/nodejs.nix`。
-   - Python 解释器及相关环境配置放入 `development/python.nix`。
-   - Rust 的全局用户环境只保留 cargo、rustc、rustfmt、clippy 与 rust-analyzer 等通用基础工具，配置放入 `development/rust.nix`。
-   - Tauri 等额外 Rust 技术栈使用实际家目录 `~/DevTemplates/<技术栈>/` 下由 direnv 管理的项目级开发环境模板，不通过 Home Manager 映射，也不在本仓库保存模板副本。
-   - `~/DevTemplates/` 下 Rust 项目模板的 Flake 输入统一使用 `github:Melorise/nixpkgs/nixos-unstable`；模板不预先生成锁定文件，使用时由用户复制到具体项目并自行初始化。
-   - Git 配置放入 `development/git.nix`。
-   - SSH 配置放入 `development/ssh.nix`。
-   - 后续出现新的开发类别时，应在 `development/` 下新建语义清晰的专用文件，并在 `home/tippy/default.nix` 中导入。
-3. 日常软件和其他普通软件放入 `packages/`，继续按更新频率选择文件：
-   - `packages/packages-unstable.nix`：更新频繁、无需刻意控制版本的软件，例如 Chrome。
-   - `packages/packages.nix`：时效性不强、可以数月不更新的软件，例如 `ripgrep`、`fd`、`htop`。
+| NixOS configuration | 系统入口 | 用户 | Home profile |
+|---|---|---|---|
+| `desktop` | `hosts/desktop/default.nix` | `tippy` | `home/profiles/desktop/tippy.nix` |
+| `asus` | `hosts/asus/default.nix` | `tippy` | `home/profiles/asus/tippy.nix` |
+| `wsl` | `hosts/wsl/default.nix` | `nixos` | `home/profiles/wsl/nixos.nix` |
+| `hp` | `hosts/hp/default.nix` | `hp` | `home/profiles/hp/hp.nix` |
 
 ## 文件说明
 
-### 根目录
+### 根目录与主机
 
-- `flake.nix`：Flake 入口，定义 stable/unstable nixpkgs、Home Manager、Amber PM、Clash Party、ChatGPT、TamaASR、NixOS-WSL、Spark Store、Spark Winfonts 与 nPanel 输入。第三方软件通过可扩展的 `thirdPartyOverlays` 聚合进 `pkgs-thirdParty`，公共上游 NixOS module 通过 `thirdPartyNixosModules` 引入，Clash Party 与 NixOS-WSL 通过 `mkHost.extraNixosModules` 按主机引入；`mkHost` 同时按主机选择 Home Manager 用户和配置，物理机使用 `tippy`，WSL 使用 `nixos`。nPanel 的 NixOS module 通过 `specialArgs.inputs` 供仅 ASUS 导入的专用模块使用。通过 `mkHost` 生成 `desktop`、`asus` 和 `wsl` 三台设备的 NixOS 配置；设备差异由各自 `hosts/` 目录提供。
-- `flake.lock`：锁定 Flake 输入的具体版本。除非用户明确要求，不要自行更新。
-- `AGENTS.md`：本仓库的 Codex 协作规范和配置约定。
-- `CLAUDE.md`：Claude 协作规范，内容与 `AGENTS.md` 保持一致。
-- `README.md`：项目简介与常用 Nix 命令记录。记录不代表可以自行执行，仍须遵守本文件的基础原则。
+- `flake.nix`：定义 stable/unstable nixpkgs、Home Manager 和第三方输入，构造 `pkgs-unstable` 与 `pkgs-thirdParty`，并通过 `mkHost` 创建四台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
+- `hosts/desktop/default.nix`：台式机系统配置，使用 BIOS GRUB、Cinnamon、Docker、物理机网络、系统开发工具、桌面程序与 `tippy` 用户。
+- `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
+- `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
+- `hosts/asus/hardware-configuration.nix`：ASUS 自动生成的硬件和磁盘配置。
+- `hosts/hp/default.nix`：HP 系统配置，主机名为 `tippy-hp`，使用 `/dev/sda` BIOS GRUB、KDE Plasma Wayland、Docker、nPanel、CUPS、Clash 和 `hp` 用户，不启用 OS Prober。
+- `hosts/hp/hardware-configuration.nix`：HP 自动生成的 Intel 与磁盘配置；根、`/home` 和 `/nix` 位于同一 Btrfs 文件系统，使用 `compress-force=zstd:3` 和 `noatime`，并保留独立 swap 分区。
+- `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，只启用 CLI 系统环境、Docker、GC 和必要的 Nix 设置。
 
-### `hosts/`
+### 系统模块
 
-- `hosts/desktop/default.nix`：台式机的设备级入口，设置主机名、GRUB 引导方式、Nix 实验性功能，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块和 Clash 配置。
-- `hosts/desktop/hardware-configuration.nix`：台式机硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/asus/default.nix`：华硕设备的设备级入口，设置主机名、UEFI GRUB 和 Nix 实验性功能，启用 Windows 启动项探测，并将 `tippy` 配置为 Nix 信任用户；同时导入通用系统模块、Clash 配置及 nPanel 测试服务。
-- `hosts/asus/hardware-configuration.nix`：华硕硬件自动生成配置，包含磁盘 UUID、文件系统、交换分区和内核模块。通常不手动修改。
-- `hosts/wsl/default.nix`：NixOS-WSL 设备级入口，创建并设置 `nixos` 为 WSL 默认用户，配置 Nix 实验性功能，并导入适合 WSL 的垃圾回收、Docker、用户和通用软件模块；不导入物理机硬件、桌面环境、Clash 或 `home/tippy` 配置。
+- `modules/desktop/cinnamon.nix`：Cinnamon、LightDM 和 X11。
+- `modules/desktop/kde.nix`：KDE Plasma 6、SDDM Wayland greeter 和默认 Plasma Wayland 会话。
+- `modules/desktop/fonts.nix`：Noto CJK、Emoji、Meslo Nerd Font、Spark Winfonts 和固定的 fontconfig 默认字体。
+- `modules/desktop/locale.nix`：上海时区、中文 locale、Fcitx5 中文输入法和中文 XKB 布局。
+- `modules/hardware/audio.nix`：PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
+- `modules/hardware/nvidia.nix`：ASUS NVIDIA 驱动、电源管理、混合模式和 `nvidia-offload`。
+- `modules/networking/physical.nix`：物理机无线网络、NetworkManager 和现有关闭防火墙策略。
+- `modules/nix/settings.nix`：Flakes、镜像、第三方缓存、非自由软件许可和所有设备的 store 自动优化。
+- `modules/nix/gc.nix`：每天垃圾回收并删除三天前的旧世代。
+- `modules/packages/base.nix`：系统管理和诊断所需的基础命令行工具。
+- `modules/packages/development.nix`：系统级 C/C++ 与原生项目构建工具链。
+- `modules/packages/mission-center.nix`：物理桌面使用的 Mission Center。
+- `modules/programs/appimage.nix`：AppImage 支持与 binfmt 直接执行。
+- `modules/programs/direnv.nix`：系统级启用 direnv。
+- `modules/programs/clash.nix`：Clash Party 与 Clash Verge，包含 TUN、service mode、上游模块和指定包。
+- `modules/programs/linyaps.nix`：Linyaps 主程序、沙盒、商店安装器、状态目录和服务初始化。
+- `modules/programs/spark-store.nix`：Amber PM 系统集成、首次状态初始化和 Spark Store。
+- `modules/programs/steam.nix`：Steam 与 Protontricks。
+- `modules/programs/tama-asr.nix`：安装自行管理自动启动的 TamaASR。
+- `modules/services/docker.nix`：开机启动的 rootful Docker 和 Docker Compose。
+- `modules/services/npanel.nix`：nPanel 上游模块和服务设置，使用端口 4096 与安全入口 `/npanel`。
+- `modules/services/printing.nix`：CUPS 打印服务。
+- `modules/storage/bees.nix`：HP 根 Btrfs 的单一 bees 去重实例，使用 256 MiB 哈希表；同一文件系统的子卷不得配置多个实例。
+- `modules/storage/ntfs.nix`：启用 ntfs-3g，并让 UDisks 使用 ntfs-3g 而非内核 ntfs3 驱动。
+- `modules/storage/zram.nix`：使用 NixOS 默认参数启用 zram swap。
+- `modules/users/tippy.nix`：创建 `tippy` 系统用户，启用 Zsh，并赋予 Docker、NetworkManager 与 wheel 组权限。
+- `modules/users/nixos.nix`：创建 WSL `nixos` 系统用户，启用 Zsh，并赋予 Docker 与 wheel 组权限。
+- `modules/users/hp.nix`：创建 `hp` 系统用户，启用 Zsh，并赋予 Docker、NetworkManager 与 wheel 组权限。
 
-### `modules/`
+### Home Manager 模块
 
-- `modules/hardware/`：硬件与底层系统资源配置目录。
-- `modules/hardware/audio.nix`：启用 PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
-- `modules/hardware/filesystems.nix`：启用 ntfs-3g 文件系统工具，并配置 UDisks 对 NTFS 分区使用 ntfs-3g 而不是内核 ntfs3 驱动。
-- `modules/hardware/gc.nix`：每天自动执行 Nix 垃圾回收并删除 3 天前的旧世代，不限制 GRUB 启动项数量。
-- `modules/hardware/networking.nix`：启用无线网络支持和 NetworkManager，并由 NetworkManager 管理系统 DNS。
-- `modules/hardware/nvidia.nix`：ASUS 设备的 NVIDIA 驱动、电源管理和 X11 自动选卡配置；不固定 GPU BusID 或主显示卡，以兼容混合模式与独显直连，并提供 `nvidia-offload` 命令。
-- `modules/hardware/zram.nix`：为两台设备启用使用 NixOS 默认参数的 zram 压缩交换空间，并保留磁盘 swap 作为后备。
-- `modules/desktops/`：桌面环境、字体与本地化配置目录。
-- `modules/desktops/cinnamon.nix`：启用 X11、LightDM、Cinnamon 及中文键盘布局。
-- `modules/desktops/fonts.nix`：安装 Noto CJK 简体中文黑体、宋体、彩色 Emoji 字体、Powerlevel10k 使用的 Meslo Nerd Font 及 `pkgs-thirdParty` 的 Spark Winfonts，并为无衬线、衬线、等宽及 Emoji 字体设置明确的 fontconfig 默认值，避免新增字体改变系统界面或终端的通用字体匹配。
-- `modules/desktops/locale.nix`：设置上海时区、中文 locale 与 Fcitx5 中文输入法。
-- `modules/packages/`：系统级软件及其集成配置目录。
-- `modules/packages/default.nix`：通用系统级软件与软件模块配置；当前包含 CERNET Nixpkgs 镜像、Clash Party 与 TamaASR 的 Cachix 设置、`allowUnfree`、direnv、AppImage 运行支持、常用基础工具以及面向 npm 原生模块和常规项目的基础开发工具链。AppImage 通过 `programs.appimage` 启用，并注册 binfmt 以支持直接执行 `.AppImage` 文件。桌面专用软件和桌面网络代理软件分别放在 `desktop-packages.nix` 与 `clash.nix`，新增普通用户态软件不应默认放在这里。TamaASR 继续使用旧名称的 `meloasr.cachix.org` 缓存。
-- `modules/packages/desktop-packages.nix`：仅由桌面机与 ASUS 导入的桌面专用系统软件配置；通过 NixOS 模块启用 Steam、用于为 Proton 游戏前缀安装兼容组件的 Protontricks，以及使用 `pkgs-unstable` 中主程序、沙盒运行时和网页商店安装器的 Linyaps 完整系统集成；Linyaps 状态目录会修正为服务用户所有，并仅首次生成默认仓库配置以保留后续修改，包管理服务随系统启动以初始化并持续提供仓库；同时安装自行管理自动启动配置的 TamaASR。
-- `modules/packages/clash.nix`：物理机专用的 Clash Party 与 Clash Verge 配置，包括 Clash Verge 的 TUN、service 模式和第三方包；仅由桌面机与 ASUS 导入。
-- `modules/packages/spark-store.nix`：仅由 ASUS 主机导入，启用 Amber PM 的系统级配置和首次状态初始化，并安装需要 Polkit 与桌面集成的 Spark Store。
-- `modules/users/`：系统用户配置目录。
-- `modules/users/nixos.nix`：定义 WSL 专用的 `nixos` 用户、默认 Zsh 登录 Shell 和 `docker`、`wheel` 用户组。
-- `modules/users/tippy.nix`：定义 `tippy` 系统用户、默认 Zsh 登录 Shell 和 `docker`、`networkmanager`、`wheel` 用户组，并在系统级启用 Zsh；`docker` 组允许无需 sudo 访问 rootful Docker daemon，具有近似 root 的权限。
-- `modules/server/`：系统级服务配置目录。
-- `modules/server/docker.nix`：为物理机和 WSL 主机启用开机启动的 rootful Docker 服务，并安装 Docker Compose。
-- `modules/server/npanel.nix`：仅由 ASUS 主机导入并启用 `Melorise/nPanel` 的 `nixos-26.05/v2.0.2` 分支提供的 nPanel 服务；服务使用端口 4096 和安全入口 `/npanel`，状态目录为 `/var/lib/npanel`、运行时目录为 `/run/npanel`，首次启动会在状态目录写入一次性管理员密码。
-
-### `home/tippy/`
-
-- `home/tippy/default.nix`：Home Manager 入口，设置用户、家目录和状态版本，并导入基础环境、开发与普通软件等用户级分类配置。
-- `home/tippy/config/`：用户级基础环境配置目录。
-- `home/tippy/config/zsh.nix`：启用 Zsh、Tab 命令补全、语法高亮和历史命令行内建议，加载 Powerlevel10k，并读取由交互式向导生成的 `~/.p10k.zsh`。
-- `home/tippy/development/`：开发相关软件与配置目录。后续新增的开发类别应在此目录中建立语义清晰的专用文件。
-- `home/tippy/development/ai-agent.nix`：AI agent 类用户软件。Claude Code、Codex、OpenCode、cc-switch 使用 `pkgs-unstable`，ChatGPT 应用使用 `pkgs-thirdParty.chatgpt`；desktop entry 由新版上游 Nix 包直接提供。后续同类软件均放在这里。
-- `home/tippy/development/git.nix`：启用并配置用户级 Git，包括身份信息和默认分支。
-- `home/tippy/development/ide.nix`：IDE 类用户软件，当前从 `pkgs-unstable` 安装带 FHS 兼容环境的 VS Code。
-- `home/tippy/development/nodejs.nix`：Node.js 专用配置，安装 Node.js、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。Node.js 相关内容应集中在这里。
-- `home/tippy/development/python.nix`：Python 专用配置，安装稳定源的 Python 3.14。Python 解释器及相关环境配置应集中在这里。
-- `home/tippy/development/rust.nix`：Rust 用户环境专用配置，通过 `programs.cargo` 安装 cargo 并管理 `~/.cargo/config.toml`，同时安装稳定源的 rustc、rustfmt、clippy 与 rust-analyzer。Tauri 等额外技术栈不加入全局会话，改用实际家目录 `~/DevTemplates/<技术栈>/` 下由 direnv 管理的项目级模板；当前 Tauri 模板位于 `~/DevTemplates/tauri/`，其 Flake 跟随 `github:Melorise/nixpkgs/nixos-unstable`。
-- `home/tippy/development/ssh.nix`：启用并配置用户级 SSH，包括 GitHub 主机连接规则。
-- `home/tippy/packages/`：日常软件和其他普通软件目录，继续按更新频率区分稳定版与 unstable 包。
-- `home/tippy/packages/packages.nix`：稳定版通用用户软件，存放时效性不强、可以数月不更新的软件。
-- `home/tippy/packages/packages-unstable.nix`：unstable 通用用户软件，存放更新频繁、无需刻意控制版本的软件；已由 `default.nix` 导入。
-
-### `home/nixos/`
-
-- `home/nixos/default.nix`：WSL `nixos` 用户的 Home Manager 入口，设置用户、家目录和状态版本，并只导入 WSL 所需的基础环境、开发工具、CLI AI agent 与终端软件。
-- `home/nixos/config/zsh.nix`：启用 WSL 用户的 Zsh、命令补全、语法高亮和 Powerlevel10k。
-- `home/nixos/development/`：WSL 用户的开发工具与配置，不包含 ChatGPT 桌面应用或其他桌面软件。
-- `home/nixos/development/ai-agent.nix`：仅安装 Claude Code、Codex、OpenCode 和 cc-switch 等 CLI AI agent。
-- `home/nixos/development/git.nix`：WSL 用户的 Git 配置。
-- `home/nixos/development/nodejs.nix`：安装 Node.js 24、设置 npm 全局包目录及用户会话 `PATH`，并通过优先级更高的用户本地包装脚本仅为 `dsh` 添加其 HMR 所需的 Node 内部接口参数。
-- `home/nixos/development/python.nix`：安装 Python 3.14。
-- `home/nixos/development/rust.nix`：安装 Rust 编译器、格式化工具、Clippy 和 rust-analyzer。
-- `home/nixos/development/ssh.nix`：WSL 用户的 SSH 主机配置。
-- `home/nixos/packages/packages.nix`：仅安装 ripgrep、fd 和 htop 等终端基础软件，不安装 Chrome、QQ 或 Unity Hub。
+- `home/modules/config/zsh.nix`：共享的 Zsh、补全、语法高亮、命令建议与 Powerlevel10k 配置。
+- `home/modules/development/git.nix`：共享 Git 身份和默认分支。
+- `home/modules/development/ssh.nix`：共享 GitHub 与 Gitee SSH 主机规则。
+- `home/modules/development/nodejs.nix`：Node.js 24、npm 全局目录、用户 PATH 和 `dsh` 包装脚本。
+- `home/modules/development/pnpm.nix`：独立安装 pnpm，供需要它的设备 profile 选择。
+- `home/modules/development/python.nix`：Python 3.14。
+- `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
+- `home/modules/development/vscode.nix`：unstable 的 FHS VS Code。
+- `home/modules/development/unityhub.nix`：Unity Hub。
+- `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode、cc-switch 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 unstable。
+- `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
+- `home/modules/packages/chrome.nix`：unstable Google Chrome。
+- `home/modules/packages/qq.nix`：unstable QQ。
+- `home/users/*.nix`：分别定义 `tippy`、`nixos` 和 `hp` 的用户名、家目录与 Home Manager state version。
+- `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的完整开发、AI 和桌面应用组合。
+- `home/profiles/asus/tippy.nix`：ASUS `tippy` 的完整开发、AI 和桌面应用组合。
+- `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用与 pnpm。
+- `home/profiles/hp/hp.nix`：HP `hp` 的 Zsh、Git、SSH、Node.js、pnpm、Python、VS Code、Claude Code、Codex、cc-switch、ChatGPT、Chrome、QQ 和 CLI 工具；不安装 Rust、OpenCode、Unity Hub 或 Firefox。

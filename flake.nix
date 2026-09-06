@@ -86,62 +86,50 @@
         overlays = thirdPartyOverlays;
       };
 
-      thirdPartyNixosModules = [
-        inputs.amber-pm.nixosModules.default
-      ];
-
       mkHost = {
         hostModule,
-        extraNixosModules ? [ ],
         homeUser ? "tippy",
-        homeModule ? ./home/tippy,
+        homeModule,
       }:
         nixpkgs.lib.nixosSystem {
           inherit system;
 
           specialArgs = { inherit inputs pkgs-unstable pkgs-thirdParty; };
 
-          modules =
-            [
-              hostModule
-            ]
-            ++ thirdPartyNixosModules
-            ++ extraNixosModules
-            ++ [
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.users.${homeUser} = import homeModule;
+          modules = [
+            hostModule
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.users.${homeUser} = import homeModule;
 
-                home-manager.extraSpecialArgs = {
-                  inherit pkgs-unstable pkgs-thirdParty;
-                };
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-              }
-            ];
+              home-manager.extraSpecialArgs = {
+                inherit pkgs-unstable pkgs-thirdParty;
+              };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+          ];
         };
     in
     {
       nixosConfigurations = {
         desktop = mkHost {
           hostModule = ./hosts/desktop;
-          extraNixosModules = [
-            inputs.clash-party.nixosModules.clash-party
-          ];
+          homeModule = ./home/profiles/desktop/tippy.nix;
         };
         asus = mkHost {
           hostModule = ./hosts/asus;
-          extraNixosModules = [
-            inputs.clash-party.nixosModules.clash-party
-          ];
+          homeModule = ./home/profiles/asus/tippy.nix;
         };
         wsl = mkHost {
           hostModule = ./hosts/wsl;
           homeUser = "nixos";
-          homeModule = ./home/nixos;
-          extraNixosModules = [
-            inputs.nixos-wsl.nixosModules.default
-          ];
+          homeModule = ./home/profiles/wsl/nixos.nix;
+        };
+        hp = mkHost {
+          hostModule = ./hosts/hp;
+          homeUser = "hp";
+          homeModule = ./home/profiles/hp/hp.nix;
         };
       };
     };
