@@ -109,7 +109,7 @@
 - `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
 - `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
 - `hosts/asus/hardware-configuration.nix`：ASUS 自动生成的硬件和磁盘配置。
-- `hosts/hp/default.nix`：HP 系统配置，主机名为 `tippy-hp`，使用 `/dev/sda` BIOS GRUB、KDE Plasma Wayland、Docker、nPanel、CUPS、Clash 和 `hp` 用户，不启用 OS Prober。
+- `hosts/hp/default.nix`：HP 系统配置，主机名为 `tippy-hp`，使用 `/dev/sda` BIOS GRUB、KDE Plasma Wayland、Docker、nPanel、CUPS、Clash、Steam、TamaASR、Spark Store 和 `hp` 用户，不启用 OS Prober 或 Linyaps。
 - `hosts/hp/hardware-configuration.nix`：HP 自动生成的 Intel 与磁盘配置；根、`/home` 和 `/nix` 位于同一 Btrfs 文件系统，使用 `compress-force=zstd:3` 和 `noatime`，并保留独立 swap 分区。
 - `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，只启用 CLI 系统环境、Docker、GC 和必要的 Nix 设置。
 

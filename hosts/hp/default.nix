@@ -32,6 +32,9 @@
     ../../modules/programs/direnv.nix
     ../../modules/programs/appimage.nix
     ../../modules/programs/clash.nix
+    ../../modules/programs/steam.nix
+    ../../modules/programs/tama-asr.nix
+    ../../modules/programs/spark-store.nix
   ];
 
   nix.settings.trusted-users = [
