@@ -155,7 +155,7 @@
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
 - `home/modules/development/vscode.nix`：unstable 的 FHS VS Code。
 - `home/modules/development/unityhub.nix`：Unity Hub。
-- `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode、cc-switch 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 unstable。
+- `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 unstable。
 - `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
 - `home/modules/packages/chrome.nix`：unstable Google Chrome。
 - `home/modules/packages/qq.nix`：unstable QQ。
@@ -163,4 +163,4 @@
 - `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的完整开发、AI 和桌面应用组合。
 - `home/profiles/asus/tippy.nix`：ASUS `tippy` 的完整开发、AI 和桌面应用组合。
 - `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用与 pnpm。
-- `home/profiles/hp/hp.nix`：HP `hp` 的 Zsh、Git、SSH、Node.js、pnpm、Python、VS Code、Claude Code、Codex、cc-switch、ChatGPT、Chrome、QQ 和 CLI 工具；不安装 Rust、OpenCode、Unity Hub 或 Firefox。
+- `home/profiles/hp/hp.nix`：HP `hp` 的 Zsh、Git、SSH、Node.js、pnpm、Python、VS Code、Claude Code、Codex、ChatGPT、Chrome、QQ 和 CLI 工具；不安装 Rust、OpenCode、Unity Hub 或 Firefox。

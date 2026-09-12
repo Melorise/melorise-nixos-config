@@ -12,7 +12,6 @@
     ../../modules/development/vscode.nix
     ../../modules/development/ai/claude-code.nix
     ../../modules/development/ai/codex.nix
-    ../../modules/development/ai/cc-switch.nix
     ../../modules/development/ai/chatgpt.nix
     ../../modules/packages/cli.nix
     ../../modules/packages/chrome.nix

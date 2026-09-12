@@ -12,7 +12,6 @@
     ../../modules/development/ai/claude-code.nix
     ../../modules/development/ai/codex.nix
     ../../modules/development/ai/opencode.nix
-    ../../modules/development/ai/cc-switch.nix
     ../../modules/packages/cli.nix
   ];
 }
