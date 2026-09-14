@@ -16,6 +16,7 @@
     ../../modules/development/ai/codex.nix
     ../../modules/development/ai/opencode.nix
     ../../modules/development/ai/chatgpt.nix
+    ../../modules/development/ai/cc-switch.nix
     ../../modules/packages/cli.nix
     ../../modules/packages/chrome.nix
     ../../modules/packages/qq.nix

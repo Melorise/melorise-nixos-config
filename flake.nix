@@ -34,6 +34,11 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    cc-switch = {
+      url = "github:Melorise/cc-switch-nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     spark-store = {
       url = "github:Melorise/spark-store/nixos";
       flake = false;
@@ -70,6 +75,9 @@
         })
         (_final: _prev: {
           chatgpt = inputs.chatgpt.packages.${system}.chatgpt;
+        })
+        (_final: _prev: {
+          cc-switch = inputs.cc-switch.packages.${system}.cc-switch;
         })
         (_final: _prev: {
           tama-asr = inputs.tama-asr.packages.${system}.tama-asr;
