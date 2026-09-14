@@ -126,11 +126,6 @@
           homeUser = "nixos";
           homeModule = ./home/profiles/wsl/nixos.nix;
         };
-        hp = mkHost {
-          hostModule = ./hosts/hp;
-          homeUser = "hp";
-          homeModule = ./home/profiles/hp/hp.nix;
-        };
       };
     };
 }

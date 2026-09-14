@@ -63,7 +63,6 @@
 ├── hosts/
 │   ├── desktop/                      台式机系统入口与硬件配置
 │   ├── asus/                         ASUS 系统入口与硬件配置
-│   ├── hp/                           HP 系统入口与 Btrfs 硬件配置
 │   └── wsl/                          NixOS-WSL 系统入口
 ├── modules/
 │   ├── desktop/                      桌面环境、字体和本地化系统模块
@@ -72,8 +71,8 @@
 │   ├── nix/                          Nix daemon 设置与垃圾回收模块
 │   ├── packages/                     系统基础包和开发工具链模块
 │   ├── programs/                     需要 NixOS 集成的程序模块
-│   ├── services/                     Docker、nPanel、打印等系统服务
-│   ├── storage/                      文件系统、zram 和去重模块
+│   ├── services/                     Docker、nPanel 等系统服务
+│   ├── storage/                      文件系统与 zram 模块
 │   └── users/                        NixOS 系统用户定义
 └── home/
     ├── modules/                      可复用的 Home Manager 功能模块
@@ -98,25 +97,21 @@
 | `desktop` | `hosts/desktop/default.nix` | `tippy` | `home/profiles/desktop/tippy.nix` |
 | `asus` | `hosts/asus/default.nix` | `tippy` | `home/profiles/asus/tippy.nix` |
 | `wsl` | `hosts/wsl/default.nix` | `nixos` | `home/profiles/wsl/nixos.nix` |
-| `hp` | `hosts/hp/default.nix` | `hp` | `home/profiles/hp/hp.nix` |
 
 ## 文件说明
 
 ### 根目录与主机
 
-- `flake.nix`：定义 stable/unstable nixpkgs、Home Manager 和第三方输入，构造 `pkgs-unstable` 与 `pkgs-thirdParty`，并通过 `mkHost` 创建四台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
+- `flake.nix`：定义 stable/unstable nixpkgs、Home Manager 和第三方输入，构造 `pkgs-unstable` 与 `pkgs-thirdParty`，并通过 `mkHost` 创建三台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
 - `hosts/desktop/default.nix`：台式机系统配置，使用 BIOS GRUB、Cinnamon、Docker、物理机网络、系统开发工具、桌面程序与 `tippy` 用户。
 - `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
 - `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
 - `hosts/asus/hardware-configuration.nix`：ASUS 自动生成的硬件和磁盘配置。
-- `hosts/hp/default.nix`：HP 系统配置，主机名为 `tippy-hp`，使用 `/dev/sda` BIOS GRUB、KDE Plasma Wayland、Docker、nPanel、CUPS、Clash、Steam、TamaASR、Spark Store 和 `hp` 用户，不启用 OS Prober 或 Linyaps。
-- `hosts/hp/hardware-configuration.nix`：HP 自动生成的 Intel 与磁盘配置；根、`/home` 和 `/nix` 位于同一 Btrfs 文件系统，使用 `compress-force=zstd:3` 和 `noatime`，并保留独立 swap 分区。
 - `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，只启用 CLI 系统环境、Docker、GC 和必要的 Nix 设置。
 
 ### 系统模块
 
 - `modules/desktop/cinnamon.nix`：Cinnamon、LightDM 和 X11。
-- `modules/desktop/kde.nix`：KDE Plasma 6、SDDM Wayland greeter 和默认 Plasma Wayland 会话。
 - `modules/desktop/fonts.nix`：Noto CJK、Emoji、Meslo Nerd Font、Spark Winfonts 和固定的 fontconfig 默认字体。
 - `modules/desktop/locale.nix`：上海时区、中文 locale、Fcitx5 中文输入法和中文 XKB 布局。
 - `modules/hardware/audio.nix`：PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
@@ -136,13 +131,10 @@
 - `modules/programs/tama-asr.nix`：安装自行管理自动启动的 TamaASR。
 - `modules/services/docker.nix`：开机启动的 rootful Docker 和 Docker Compose。
 - `modules/services/npanel.nix`：nPanel 上游模块和服务设置，使用端口 4096 与安全入口 `/npanel`。
-- `modules/services/printing.nix`：CUPS 打印服务。
-- `modules/storage/bees.nix`：HP 根 Btrfs 的单一 bees 去重实例，使用 256 MiB 哈希表；同一文件系统的子卷不得配置多个实例。
 - `modules/storage/ntfs.nix`：启用 ntfs-3g，并让 UDisks 使用 ntfs-3g 而非内核 ntfs3 驱动。
 - `modules/storage/zram.nix`：使用 NixOS 默认参数启用 zram swap。
 - `modules/users/tippy.nix`：创建 `tippy` 系统用户，启用 Zsh，并赋予 Docker、NetworkManager 与 wheel 组权限。
 - `modules/users/nixos.nix`：创建 WSL `nixos` 系统用户，启用 Zsh，并赋予 Docker 与 wheel 组权限。
-- `modules/users/hp.nix`：创建 `hp` 系统用户，启用 Zsh，并赋予 Docker、NetworkManager 与 wheel 组权限。
 
 ### Home Manager 模块
 
@@ -159,8 +151,7 @@
 - `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
 - `home/modules/packages/chrome.nix`：unstable Google Chrome。
 - `home/modules/packages/qq.nix`：unstable QQ。
-- `home/users/*.nix`：分别定义 `tippy`、`nixos` 和 `hp` 的用户名、家目录与 Home Manager state version。
+- `home/users/*.nix`：分别定义 `tippy` 和 `nixos` 的用户名、家目录与 Home Manager state version。
 - `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的完整开发、AI 和桌面应用组合。
 - `home/profiles/asus/tippy.nix`：ASUS `tippy` 的完整开发、AI 和桌面应用组合。
 - `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用与 pnpm。
-- `home/profiles/hp/hp.nix`：HP `hp` 的 Zsh、Git、SSH、Node.js、pnpm、Python、VS Code、Claude Code、Codex、ChatGPT、Chrome、QQ 和 CLI 工具；不安装 Rust、OpenCode、Unity Hub 或 Firefox。

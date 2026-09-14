@@ -42,14 +42,6 @@ sudo nixos-rebuild switch --flake .#desktop
 sudo nixos-rebuild switch --flake .#asus
 ```
 
-### 应用 HP 设备配置
-
-构建并切换到使用 KDE Plasma Wayland、Btrfs 压缩与 bees 去重的 `hp` 配置：
-
-```bash
-sudo nixos-rebuild switch --flake .#hp
-```
-
 ### 应用 WSL 配置
 
 先从 [NixOS-WSL Releases](https://github.com/nix-community/NixOS-WSL/releases/latest) 下载 `nixos.wsl`，然后在 PowerShell 中安装 WSL2 发行版：
