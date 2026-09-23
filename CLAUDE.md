@@ -1,6 +1,6 @@
 # 个人 NixOS 配置
 
-这是我的个人 NixOS 配置，使用 Nix Flakes 和 Home Manager 管理。当前 NixOS 版本为 26.05。
+这是我的个人 NixOS 配置，使用 Nix Flakes 和 Home Manager 管理。基础系统跟随 nixos-unstable，现有系统与 Home Manager 的 state version 保持 26.05。
 
 ## 你需要协助我管理，但不能越权
 
@@ -82,9 +82,9 @@
 
 ## 包集与第三方来源
 
-- `pkgs` 是 NixOS 26.05 稳定包集，`pkgs-unstable` 是 unstable 包集。
+- `pkgs` 是 nixos-unstable 包集，系统与 Home Manager 模块共用这一包集。
 - 所有不在 nixpkgs 的第三方软件包通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，业务模块只接收单一的 `pkgs-thirdParty` 参数。
-- Amber PM、CC Switch、Clash Party、ChatGPT、TamaASR、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input。
+- Amber PM、CC Switch、Clash Party、ChatGPT、nPanel、TamaASR、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input；nPanel 使用 `nixos-unstable/v2.0.3` 分支。
 - 对存在上游缓存的软件，不增加 `nixpkgs.follows`，不使用 `overrideAttrs` 改写上游包，以保留缓存命中。没有缓存的输入应跟随现有 nixpkgs 输入以减少闭包占用。
 - Spark Store 不是 Flake，由 `thirdPartyOverlays` 调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。
 - CERNET Nixpkgs 镜像、Clash Party 和 TamaASR Cachix 地址及公钥统一由 `modules/nix/settings.nix` 配置。TamaASR 继续使用旧名称 `meloasr.cachix.org`。
@@ -102,7 +102,7 @@
 
 ### 根目录与主机
 
-- `flake.nix`：定义 stable/unstable nixpkgs、Home Manager 和第三方输入，构造 `pkgs-unstable` 与 `pkgs-thirdParty`，并通过 `mkHost` 创建三台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
+- `flake.nix`：定义 nixos-unstable、Home Manager 和第三方输入，构造 `pkgs-thirdParty`，并通过 `mkHost` 创建三台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
 - `hosts/desktop/default.nix`：台式机系统配置，使用 BIOS GRUB、Cinnamon、Docker、物理机网络、系统开发工具、桌面程序与 `tippy` 用户。
 - `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
 - `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
@@ -145,13 +145,13 @@
 - `home/modules/development/pnpm.nix`：独立安装 pnpm，供需要它的设备 profile 选择。
 - `home/modules/development/python.nix`：Python 3.14。
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
-- `home/modules/development/vscode.nix`：unstable 的 FHS VS Code。
+- `home/modules/development/vscode.nix`：FHS VS Code。
 - `home/modules/development/unityhub.nix`：Unity Hub。
 - `home/modules/development/ai/cc-switch.nix`：使用 `pkgs-thirdParty` 安装 CC Switch。
-- `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 unstable。
+- `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 `pkgs`。
 - `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
-- `home/modules/packages/chrome.nix`：unstable Google Chrome。
-- `home/modules/packages/qq.nix`：unstable QQ。
+- `home/modules/packages/chrome.nix`：Google Chrome。
+- `home/modules/packages/qq.nix`：QQ。
 - `home/users/*.nix`：分别定义 `tippy` 和 `nixos` 的用户名、家目录与 Home Manager state version。
 - `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的完整开发、AI 和桌面应用组合。
 - `home/profiles/asus/tippy.nix`：ASUS `tippy` 的完整开发、AI 和桌面应用组合。

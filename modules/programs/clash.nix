@@ -1,4 +1,4 @@
-{ inputs, pkgs-unstable, pkgs-thirdParty, ... }:
+{ inputs, pkgs, pkgs-thirdParty, ... }:
 
 {
   imports = [ inputs.clash-party.nixosModules.clash-party ];
@@ -13,7 +13,7 @@
       enable = true;
       tunMode = true;
       serviceMode = true;
-      package = pkgs-unstable.clash-verge-rev;
+      package = pkgs.clash-verge-rev;
     };
   };
 }

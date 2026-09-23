@@ -1,7 +1,7 @@
-{ pkgs-unstable, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = [
-    pkgs-unstable.google-chrome
+    pkgs.google-chrome
   ];
 }

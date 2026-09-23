@@ -3,16 +3,12 @@
 
   inputs = {
     nixpkgs.url =
-      "github:Melorise/nixpkgs/nixos-26.05";
-      #git+https://mirrors.nju.edu.cn/git/nixpkgs.git?ref=nixos-26.05&shallow=1;
-
-    nixpkgs-unstable.url =
       "github:Melorise/nixpkgs/nixos-unstable";
       #git+https://mirrors.nju.edu.cn/git/nixpkgs.git?ref=nixos-unstable&shallow=1;
 
     home-manager = {
       url =
-        "github:nix-community/home-manager/release-26.05";
+        "github:nix-community/home-manager/master";
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -24,14 +20,14 @@
 
     amber-pm = {
       url = "github:Melorise/amber-pm/nixos";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     clash-party.url = "github:Melorise/cp-nix/main";
 
     chatgpt = {
       url = "github:Melorise/codex-desktop-linux-builder/nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     cc-switch = {
@@ -47,12 +43,12 @@
     spark-winfonts = {
       url = 
         "github:Melorise/spark-winfonts-for-nixos/main";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     
     npanel = {
       url = 
-        "github:Melorise/nPanel/nixos-26.05/v2.0.3";
+        "github:Melorise/nPanel/nixos-unstable/v2.0.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -60,13 +56,9 @@
   };
 
 
-  outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, ... }:
+  outputs = inputs@{ nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-      pkgs-unstable = import nixpkgs-unstable {
-        inherit system;
-        config.allowUnfree = true;
-      };
       thirdPartyOverlays = [
         inputs.amber-pm.overlays.default
         inputs.spark-winfonts.overlays.default
@@ -102,7 +94,7 @@
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit inputs pkgs-unstable pkgs-thirdParty; };
+          specialArgs = { inherit inputs pkgs-thirdParty; };
 
           modules = [
             hostModule
@@ -111,7 +103,7 @@
               home-manager.users.${homeUser} = import homeModule;
 
               home-manager.extraSpecialArgs = {
-                inherit pkgs-unstable pkgs-thirdParty;
+                inherit pkgs-thirdParty;
               };
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;

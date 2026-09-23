@@ -1,16 +1,16 @@
-{ pkgs-unstable, ... }:
+{ pkgs, ... }:
 
 {
   services.linyaps = {
     enable = true;
-    package = pkgs-unstable.linyaps;
-    boxPackage = pkgs-unstable.linyaps-box;
-    webStoreInstallerPackage = pkgs-unstable.linyaps-web-store-installer;
+    package = pkgs.linyaps;
+    boxPackage = pkgs.linyaps-box;
+    webStoreInstallerPackage = pkgs.linyaps-web-store-installer;
   };
 
   systemd.tmpfiles.rules = [
     "z /var/lib/linglong 0755 deepin-linglong deepin-linglong -"
-    "C /var/lib/linglong/config.yaml 0644 deepin-linglong deepin-linglong - ${pkgs-unstable.linyaps}/share/linglong/config.yaml"
+    "C /var/lib/linglong/config.yaml 0644 deepin-linglong deepin-linglong - ${pkgs.linyaps}/share/linglong/config.yaml"
   ];
 
   systemd.services."org.deepin.linglong.PackageManager".wantedBy = [

@@ -1,6 +1,6 @@
 # 个人 NixOS 配置
 
-这是我的个人 NixOS 配置仓库，基于 Nix Flakes 和 Home Manager 管理，当前使用 NixOS 26.05。
+这是我的个人 NixOS 配置仓库，基于 Nix Flakes 和 Home Manager 管理，基础系统使用 nixos-unstable。
 
 本项目采用MPL V2许可证开源，请遵守许可证使用。  
 
