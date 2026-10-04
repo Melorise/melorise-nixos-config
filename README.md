@@ -6,6 +6,12 @@
 
 建议使用AI Agent辅助管理。项目配备有完善的AGENTS.md和CLAUDE.md编码围栏。
 
+## Node.js 环境
+
+各设备的 Node.js、npm 和 pnpm 开发环境由用户自行管理，Home Manager 不再安装或配置这些工具。npm 全局前缀、相关 PATH 和 `dsh` 包装脚本也由用户自行维护。
+
+应用此配置后，Home Manager 将停止提供原有的 `NPM_CONFIG_PREFIX`、`~/.local/bin` 和 `~/.npm-global/bin` PATH 配置，以及 `~/.local/bin/dsh` 包装脚本；已有的 `~/.npm-global` 目录和其中的全局安装内容保留。
+
 ## 常用命令
 
 以下命令需要手动执行。

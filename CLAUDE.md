@@ -33,6 +33,7 @@
 - `home/profiles/<设备>/<用户>.nix` 是用户态功能的唯一组合入口，必须显式导入该设备上该用户需要的 Home Manager 模块。
 - Home profile 禁止声明 NixOS 系统选项；`hosts/` 和 `modules/` 也禁止编排 Home Manager 用户模块。
 - 同一个用户在不同设备上的 profile 可以拥有不同软件集合；不同用户也必须复用 `home/modules/` 中相同的功能模块，禁止复制整棵用户配置。
+- Node.js、npm 和 pnpm 开发环境由用户自行管理，不通过 Home Manager 安装或配置。
 
 ### Flake 职责
 
@@ -141,8 +142,6 @@
 - `home/modules/config/zsh.nix`：共享的 Zsh、补全、语法高亮、命令建议与 Powerlevel10k 配置。
 - `home/modules/development/git.nix`：共享 Git 身份和默认分支。
 - `home/modules/development/ssh.nix`：共享 GitHub 与 Gitee SSH 主机规则。
-- `home/modules/development/nodejs.nix`：Node.js 24、npm 全局目录、用户 PATH 和 `dsh` 包装脚本。
-- `home/modules/development/pnpm.nix`：独立安装 pnpm，供需要它的设备 profile 选择。
 - `home/modules/development/python.nix`：Python 3.14。
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
 - `home/modules/development/vscode.nix`：FHS VS Code。
@@ -153,6 +152,6 @@
 - `home/modules/packages/chrome.nix`：Google Chrome。
 - `home/modules/packages/qq.nix`：QQ。
 - `home/users/*.nix`：分别定义 `tippy` 和 `nixos` 的用户名、家目录与 Home Manager state version。
-- `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的完整开发、AI 和桌面应用组合。
-- `home/profiles/asus/tippy.nix`：ASUS `tippy` 的完整开发、AI 和桌面应用组合。
-- `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用与 pnpm。
+- `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的开发、AI 和桌面应用组合。
+- `home/profiles/asus/tippy.nix`：ASUS `tippy` 的开发、AI 和桌面应用组合。
+- `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用。
