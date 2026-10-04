@@ -26,6 +26,7 @@
     ../../modules/packages/development.nix
     ../../modules/packages/mission-center.nix
     ../../modules/programs/direnv.nix
+    ../../modules/programs/nix-ld.nix
     ../../modules/programs/appimage.nix
     ../../modules/programs/linyaps.nix
     ../../modules/programs/steam.nix

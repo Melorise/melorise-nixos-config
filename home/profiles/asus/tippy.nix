@@ -6,6 +6,7 @@
     ../../modules/config/zsh.nix
     ../../modules/development/ssh.nix
     ../../modules/development/git.nix
+    ../../modules/development/nvm.nix
     ../../modules/development/python.nix
     ../../modules/development/rust.nix
     ../../modules/development/vscode.nix

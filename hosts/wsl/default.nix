@@ -18,6 +18,7 @@
     ../../modules/packages/base.nix
     ../../modules/packages/development.nix
     ../../modules/programs/direnv.nix
+    ../../modules/programs/nix-ld.nix
   ];
 
   nix.settings.trusted-users = [

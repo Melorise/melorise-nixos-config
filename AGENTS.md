@@ -33,7 +33,7 @@
 - `home/profiles/<设备>/<用户>.nix` 是用户态功能的唯一组合入口，必须显式导入该设备上该用户需要的 Home Manager 模块。
 - Home profile 禁止声明 NixOS 系统选项；`hosts/` 和 `modules/` 也禁止编排 Home Manager 用户模块。
 - 同一个用户在不同设备上的 profile 可以拥有不同软件集合；不同用户也必须复用 `home/modules/` 中相同的功能模块，禁止复制整棵用户配置。
-- Node.js、npm 和 pnpm 开发环境由用户自行管理，不通过 Home Manager 安装或配置。
+- Node.js 版本由用户通过 nvm-sh/nvm 管理，NVM、npm 全局包和 pnpm 均由用户安装、更新。Home Manager 只负责 NVM 的 Zsh 初始化与补全；系统通过 nix-ld 支持官方 Node 二进制，不通过 Nix 安装用户的 Node.js 工具链。
 
 ### Flake 职责
 
@@ -108,7 +108,7 @@
 - `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
 - `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
 - `hosts/asus/hardware-configuration.nix`：ASUS 自动生成的硬件和磁盘配置。
-- `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，只启用 CLI 系统环境、Docker、GC 和必要的 Nix 设置。
+- `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，启用 CLI 系统环境、Docker、GC、必要的 Nix 设置和 nix-ld。
 
 ### 系统模块
 
@@ -125,6 +125,7 @@
 - `modules/packages/mission-center.nix`：物理桌面使用的 Mission Center。
 - `modules/programs/appimage.nix`：AppImage 支持与 binfmt 直接执行。
 - `modules/programs/direnv.nix`：系统级启用 direnv。
+- `modules/programs/nix-ld.nix`：启用 nix-ld 和 NixOS 默认兼容库，支持 NVM 下载的官方 Node 等未修补 Linux 二进制。
 - `modules/programs/clash.nix`：Clash Party 与 Clash Verge，包含 TUN、service mode、上游模块和指定包。
 - `modules/programs/linyaps.nix`：Linyaps 主程序、沙盒、商店安装器、状态目录和服务初始化。
 - `modules/programs/spark-store.nix`：Amber PM 系统集成、首次状态初始化和 Spark Store。
@@ -142,6 +143,7 @@
 - `home/modules/config/zsh.nix`：共享的 Zsh、补全、语法高亮、命令建议与 Powerlevel10k 配置。
 - `home/modules/development/git.nix`：共享 Git 身份和默认分支。
 - `home/modules/development/ssh.nix`：共享 GitHub 与 Gitee SSH 主机规则。
+- `home/modules/development/nvm.nix`：通过 Zsh 初始化加载用户自行安装的 `~/.nvm/nvm.sh` 和 NVM 补全，由 NVM 激活用户设置的默认 Node 版本。
 - `home/modules/development/python.nix`：Python 3.14。
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
 - `home/modules/development/vscode.nix`：FHS VS Code。
