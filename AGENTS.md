@@ -124,6 +124,7 @@
 - `modules/packages/development.nix`：系统级 C/C++ 与原生项目构建工具链。
 - `modules/packages/mission-center.nix`：物理桌面使用的 Mission Center。
 - `modules/programs/appimage.nix`：AppImage 支持与 binfmt 直接执行。
+- `modules/programs/gparted.nix`：为 `desktop` 和 `asus` 安装 GParted 图形分区管理工具，使用 Cinnamon 提供的 Polkit 权限认证。
 - `modules/programs/direnv.nix`：系统级启用 direnv。
 - `modules/programs/nix-ld.nix`：启用 nix-ld 和 NixOS 默认兼容库，支持 NVM 下载的官方 Node 等未修补 Linux 二进制。
 - `modules/programs/clash.nix`：Clash Party 与 Clash Verge，包含 TUN、service mode、上游模块和指定包。

@@ -28,6 +28,7 @@
     ../../modules/programs/direnv.nix
     ../../modules/programs/nix-ld.nix
     ../../modules/programs/appimage.nix
+    ../../modules/programs/gparted.nix
     ../../modules/programs/linyaps.nix
     ../../modules/programs/steam.nix
     ../../modules/programs/tama-asr.nix
