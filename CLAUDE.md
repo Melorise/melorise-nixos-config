@@ -150,6 +150,7 @@
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
 - `home/modules/development/vscode.nix`：FHS VS Code。
 - `home/modules/development/unityhub.nix`：为 `desktop` 和 `asus` 的 `tippy` 安装 Unity Hub 与国内版 Tuanjie Hub，分别使用 `pkgs.unityhub` 和 `pkgs-thirdParty.tuanjiehub`；Tuanjie Hub 的命令、应用菜单、图标和 `tuanjiehub://` 协议关联由上游包提供。
+- 国际版 Unity Hub 在该模块内通过 `override` 扩展 FHS 环境：`extraPkgs` 添加静态 Noto CJK Sans、Core Fonts、DejaVu 和 Liberation；`makeFontsConf` 使用这些字体及 fontconfig 默认规则，设置 `impureFontDirectories = [ ]`，由 FHS `profile` 导出 `FONTCONFIG_FILE`，供 Hub 及其启动的编辑器使用中文字体回退。
 - `home/modules/development/ai/cc-switch.nix`：使用 `pkgs-thirdParty` 安装 CC Switch。
 - `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 `pkgs`。
 - `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
