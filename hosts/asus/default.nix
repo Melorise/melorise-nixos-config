@@ -49,5 +49,9 @@
     "tippy"
   ];
 
+  systemd.tmpfiles.rules = [
+    "d /data 0755 tippy users -"
+  ];
+
   system.stateVersion = "26.05";
 }

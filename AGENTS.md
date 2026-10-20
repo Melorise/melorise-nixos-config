@@ -106,8 +106,8 @@
 - `flake.nix`：定义 nixos-unstable、Home Manager 和第三方输入，构造 `pkgs-thirdParty`，并通过 `mkHost` 创建三台设备。Home Manager 的 NixOS 集成只在这里完成；具体用户功能由传入的 Home profile 决定。
 - `hosts/desktop/default.nix`：台式机系统配置，使用 BIOS GRUB、Cinnamon、Docker、物理机网络、系统开发工具、桌面程序与 `tippy` 用户。
 - `hosts/desktop/hardware-configuration.nix`：台式机自动生成的硬件、磁盘 UUID、文件系统、交换分区和内核模块。
-- `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序。
-- `hosts/asus/hardware-configuration.nix`：ASUS 自动生成的硬件和磁盘配置。
+- `hosts/asus/default.nix`：ASUS 系统配置，使用 UEFI GRUB、Cinnamon、NVIDIA、Docker、nPanel、Spark Store 和物理机桌面程序；通过 `systemd.tmpfiles.rules` 将 `/data` 根目录设置为 `tippy:users`、权限 `0755`，供 `tippy` 读写，已有文件沿用各自权限。
+- `hosts/asus/hardware-configuration.nix`：ASUS 硬件和磁盘配置；通过 UUID `5c7ac475-ab19-4401-b42b-148c4306c85e` 将 `nvme0n1p6` 的 ext4 分区以 `rw` 方式开机挂载到 `/data`。
 - `hosts/wsl/default.nix`：NixOS-WSL 系统配置，默认用户为 `nixos`，启用 CLI 系统环境、Docker、GC、必要的 Nix 设置和 nix-ld。
 
 ### 系统模块
