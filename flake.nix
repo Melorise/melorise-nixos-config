@@ -35,6 +35,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    tuanjiehub = {
+      url = "github:Melorise/TuanjieHubForNix/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     spark-store = {
       url = "github:Melorise/spark-store/nixos";
       flake = false;
@@ -70,6 +75,9 @@
         })
         (_final: _prev: {
           cc-switch = inputs.cc-switch.packages.${system}.cc-switch;
+        })
+        (_final: _prev: {
+          tuanjiehub = inputs.tuanjiehub.packages.${system}.tuanjiehub;
         })
         (_final: _prev: {
           tama-asr = inputs.tama-asr.packages.${system}.tama-asr;

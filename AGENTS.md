@@ -85,7 +85,8 @@
 
 - `pkgs` 是 nixos-unstable 包集，系统与 Home Manager 模块共用这一包集。
 - 所有不在 nixpkgs 的第三方软件包通过 `thirdPartyOverlays` 统一加入 `pkgs-thirdParty`，业务模块只接收单一的 `pkgs-thirdParty` 参数。
-- Amber PM、CC Switch、Clash Party、ChatGPT、nPanel、TamaASR、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input；nPanel 使用 `nixos-unstable/v2.0.3` 分支。
+- Amber PM、CC Switch、Clash Party、ChatGPT、nPanel、TamaASR、Tuanjie Hub、NixOS-WSL、Spark Store 与 Spark Winfonts 分别作为独立 Flake input；nPanel 使用 `nixos-unstable/v2.0.3` 分支。
+- Tuanjie Hub 使用 `Melorise/TuanjieHubForNix/main`，其 nixpkgs 跟随现有输入，导出的 `tuanjiehub` 包通过 `thirdPartyOverlays` 加入 `pkgs-thirdParty`。
 - 对存在上游缓存的软件，不增加 `nixpkgs.follows`，不使用 `overrideAttrs` 改写上游包，以保留缓存命中。没有缓存的输入应跟随现有 nixpkgs 输入以减少闭包占用。
 - Spark Store 不是 Flake，由 `thirdPartyOverlays` 调用其 `nix/package.nix`，并注入同一 `pkgs-thirdParty` 中的 Amber PM。
 - CERNET Nixpkgs 镜像、Clash Party 和 TamaASR Cachix 地址及公钥统一由 `modules/nix/settings.nix` 配置。TamaASR 继续使用旧名称 `meloasr.cachix.org`。
@@ -148,7 +149,7 @@
 - `home/modules/development/python.nix`：Python 3.14。
 - `home/modules/development/rust.nix`：cargo、rustc、rustfmt、Clippy 与 rust-analyzer；额外 Rust 技术栈继续使用 `~/DevTemplates/` 下的 direnv 项目模板。
 - `home/modules/development/vscode.nix`：FHS VS Code。
-- `home/modules/development/unityhub.nix`：Unity Hub。
+- `home/modules/development/unityhub.nix`：为 `desktop` 和 `asus` 的 `tippy` 安装 Unity Hub 与国内版 Tuanjie Hub，分别使用 `pkgs.unityhub` 和 `pkgs-thirdParty.tuanjiehub`；Tuanjie Hub 的命令、应用菜单、图标和 `tuanjiehub://` 协议关联由上游包提供。
 - `home/modules/development/ai/cc-switch.nix`：使用 `pkgs-thirdParty` 安装 CC Switch。
 - `home/modules/development/ai/*.nix`：Claude Code、Codex、OpenCode 和 ChatGPT 的独立用户态选择模块；ChatGPT 使用 `pkgs-thirdParty`，其余使用 `pkgs`。
 - `home/modules/packages/cli.nix`：ripgrep、fd 和 htop。
