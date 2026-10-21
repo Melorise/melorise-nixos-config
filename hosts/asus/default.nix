@@ -22,6 +22,7 @@
     ../../modules/desktop/fonts.nix
     ../../modules/desktop/cinnamon.nix
     ../../modules/hardware/audio.nix
+    ../../modules/hardware/asus-battery.nix
     ../../modules/hardware/nvidia.nix
     ../../modules/storage/ntfs.nix
     ../../modules/storage/zram.nix
