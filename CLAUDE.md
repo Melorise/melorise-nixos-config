@@ -159,5 +159,5 @@
 - `home/modules/packages/qq.nix`：QQ。
 - `home/users/*.nix`：分别定义 `tippy` 和 `nixos` 的用户名、家目录与 Home Manager state version。
 - `home/profiles/desktop/tippy.nix`：台式机 `tippy` 的开发、AI 和桌面应用组合。
-- `home/profiles/asus/tippy.nix`：ASUS `tippy` 的开发、AI 和桌面应用组合。
+- `home/profiles/asus/tippy.nix`：ASUS `tippy` 的开发、AI 和桌面应用组合；通过 `home.file` 和 `mkOutOfStoreSymlink` 管理家目录中的 `.agents`、`.claude`、`.codebuddy`、`.codex`、`.codely`、`.codely-cli` 和 `.dsh` 整目录链接，分别指向 `/data/Dev/AI` 下的 `Agents/.agents`、`Claude/.claude`、`Codebuddy/.codebuddy`、`Codex/.codex`、`Codely/.codely`、`Codely/.codely-cli` 和 `Dsh/.dsh`，运行数据由对应工具在实际目录中维护。
 - `home/profiles/wsl/nixos.nix`：WSL `nixos` 的 CLI 开发和 AI 工具组合，不包含图形应用。

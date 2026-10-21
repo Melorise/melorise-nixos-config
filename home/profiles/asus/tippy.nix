@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -20,4 +20,14 @@
     ../../modules/packages/chrome.nix
     ../../modules/packages/qq.nix
   ];
+
+  home.file = {
+    ".agents".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Agents/.agents";
+    ".claude".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Claude/.claude";
+    ".codebuddy".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Codebuddy/.codebuddy";
+    ".codex".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Codex/.codex";
+    ".codely".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Codely/.codely";
+    ".codely-cli".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Codely/.codely-cli";
+    ".dsh".source = config.lib.file.mkOutOfStoreSymlink "/data/Dev/AI/Dsh/.dsh";
+  };
 }

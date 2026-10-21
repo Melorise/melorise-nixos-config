@@ -34,6 +34,22 @@ npm --version
 
 以上安装、迁移和验证命令均由用户手动执行。
 
+## ASUS 的 AI 工具目录
+
+ASUS 的 `tippy` Home profile 使用 Home Manager 的 `home.file` 和 `mkOutOfStoreSymlink` 管理以下整目录符号链接。配置、会话记录、凭据及其他运行数据保存在 `/data/Dev/AI`，各工具继续通过家目录中的原有入口读写。
+
+| 家目录入口 | 实际目录 |
+|---|---|
+| `~/.agents` | `/data/Dev/AI/Agents/.agents` |
+| `~/.claude` | `/data/Dev/AI/Claude/.claude` |
+| `~/.codebuddy` | `/data/Dev/AI/Codebuddy/.codebuddy` |
+| `~/.codex` | `/data/Dev/AI/Codex/.codex` |
+| `~/.codely` | `/data/Dev/AI/Codely/.codely` |
+| `~/.codely-cli` | `/data/Dev/AI/Codely/.codely-cli` |
+| `~/.dsh` | `/data/Dev/AI/Dsh/.dsh` |
+
+应用前应准备好表中的实际目录及其数据。已有指向相同目标的符号链接可以保留；若同名入口是普通目录或指向其他位置的链接，应退出对应工具并先手动整理数据与入口。随后执行下方“应用华硕设备配置”中的命令，由 Home Manager 建立和维护链接。
+
 ## 常用命令
 
 以下命令需要手动执行。
