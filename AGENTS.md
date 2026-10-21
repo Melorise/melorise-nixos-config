@@ -117,7 +117,7 @@
 - `modules/desktop/fonts.nix`：Noto CJK、Emoji、Meslo Nerd Font、Spark Winfonts 和固定的 fontconfig 默认字体。
 - `modules/desktop/locale.nix`：上海时区、中文 locale、Fcitx5 中文输入法和中文 XKB 布局。
 - `modules/hardware/audio.nix`：PipeWire、ALSA、PulseAudio 兼容层和 realtime 权限。
-- `modules/hardware/asus-battery.nix`：由 ASUS 主机导入，通过 udev 在电池添加或状态变化时，将支持 `charge_control_end_threshold` 接口的 `BAT[0-9]*` 电池充电上限设置为 80%。
+- `modules/hardware/asus-battery.nix`：由 ASUS 主机导入，通过开机启动的一次性 systemd 服务 `asus-battery-charge-limit`，在系统模块加载和 udev 设备初始化完成后，将 `BAT0/charge_control_end_threshold` 设置为 80%，并读回验证；写入、读取或验证失败时服务报告失败，操作结果通过 `journalctl -u asus-battery-charge-limit.service` 查看。
 - `modules/hardware/nvidia.nix`：ASUS NVIDIA 驱动、电源管理、混合模式和 `nvidia-offload`。
 - `modules/networking/physical.nix`：物理机无线网络、NetworkManager 和现有关闭防火墙策略。
 - `modules/nix/settings.nix`：Flakes、镜像、第三方缓存、非自由软件许可和所有设备的 store 自动优化。
