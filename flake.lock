@@ -3,15 +3,15 @@
     "amber-pm": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1787816110,
-        "narHash": "sha256-JH4+YXAkciThi2r6fAMwbK9DaiYBuEFGlIEAnmhOCyQ=",
+        "lastModified": 1791444935,
+        "narHash": "sha256-Hbb+ygOFitT1g6eFhc3VLE6CoszGNNccniQQMexN19o=",
         "owner": "Melorise",
         "repo": "amber-pm",
-        "rev": "c9f6c9f13ce08ac8ed9f73f85de64c8d9242ee14",
+        "rev": "44aa06b3e8f0750cc62727816a823005886b2358",
         "type": "github"
       },
       "original": {
@@ -24,7 +24,7 @@
     "asn": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-bW9VpKmC74+/2m4Fr8Znocf/oUfgYKJUbTRLVRy7PKI=",
+        "narHash": "sha256-fa+NKGLjv1Ot/bUpcI/moF58m5C71wzHKCEV03YvYqs=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
       },
@@ -41,11 +41,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789352484,
-        "narHash": "sha256-kue/BTWFPZccpecJggASnocyGXAFSyP7lmqL8k9STMU=",
+        "lastModified": 1792307814,
+        "narHash": "sha256-eB/PAkeDyGL02fQn+UNdzrYR3/0C3F2uqb2T8AIhq2E=",
         "owner": "Melorise",
         "repo": "cc-switch-nix-flake",
-        "rev": "238bf640d74b2ebf0ffacfbfeadce73b2677d87e",
+        "rev": "3b929ad11cec2f19354028878c3fe5fd3abb8913",
         "type": "github"
       },
       "original": {
@@ -57,20 +57,20 @@
     "cc-switch-x86_64": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-hIMVL6iczRm0MGLUZn5vZbawfYZcaQDlzWrSBh1+ZgA=",
+        "narHash": "sha256-IUeOdyqqPT01KLOh5Dh1CRSEPqn7lpAiH12WfWXDW2A=",
         "type": "file",
-        "url": "https://github.com/farion1231/cc-switch/releases/download/v3.20.3/CC-Switch-v3.20.3-Linux-x86_64.deb"
+        "url": "https://github.com/farion1231/cc-switch/releases/download/v4.0.15/CC-Switch-v4.0.15-Linux-x86_64.deb"
       },
       "original": {
         "type": "file",
-        "url": "https://github.com/farion1231/cc-switch/releases/download/v3.20.3/CC-Switch-v3.20.3-Linux-x86_64.deb"
+        "url": "https://github.com/farion1231/cc-switch/releases/download/v4.0.15/CC-Switch-v4.0.15-Linux-x86_64.deb"
       }
     },
     "chatgpt": {
       "inputs": {
         "chatgpt-deb": "chatgpt-deb",
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs"
         ]
       },
       "locked": {
@@ -91,7 +91,7 @@
     "chatgpt-deb": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-XAh8zQ+ElrAIB+/ULN7v+0RJRYJLn2FfM5l2SXMsOwA=",
+        "narHash": "sha256-z/wZjpyoNoBuAX0AAFf+aZ5iynyKYvgW9ZRPd5mNXBQ=",
         "type": "file",
         "url": "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb"
       },
@@ -112,11 +112,11 @@
         "sysproxy": "sysproxy"
       },
       "locked": {
-        "lastModified": 1790149856,
-        "narHash": "sha256-8fmBtEnYX4S3+0ZzVLfdNQlgnoiz/XNN32rLW2Mc6kU=",
+        "lastModified": 1792384796,
+        "narHash": "sha256-/kycYrh0hjBpSA/e1L9L/no+G3xOu5fNxvs4XCacuRE=",
         "owner": "Melorise",
         "repo": "cp-nix",
-        "rev": "3ad17fed9a853d765eedfdec999af56395f20e24",
+        "rev": "efe78c3adfea4eb4407a0ff38264e2e8219bf6e6",
         "type": "github"
       },
       "original": {
@@ -146,7 +146,7 @@
     "country": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-1afjsGojLaw36ZeA4jPn7pqd12mM0ldRQr7qCOUeS+s=",
+        "narHash": "sha256-ROVf3UbEoQqE1KXyqCHbItguKb1irTn8Um9sqrSydy0=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
       },
@@ -174,7 +174,7 @@
     "geoip": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-3qQbmNeCGOQ8tMEbe65S424dHla2jdA/iLqFUfX/yBI=",
+        "narHash": "sha256-3WrCrFeuxD/Zh3FYq6AcVJuLCJU2/m7LQZGxRDimbOk=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat"
       },
@@ -186,7 +186,7 @@
     "geosite": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-MOG6Stiss29xGHJR6sSOV017mrvtgjIclizVFAMxZK8=",
+        "narHash": "sha256-9rU6X9HR4gyTTgG3wx3998oUPQGFy0tu2m8SjXKekKU=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
       },
@@ -202,16 +202,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1789267039,
-        "narHash": "sha256-LWiBv9yAYFi2LPbUhDGHPGKYskJQjj2fw12OlyO1uQo=",
+        "lastModified": 1792098797,
+        "narHash": "sha256-u4DIIZgznEGzByxXrxWCXK19VcMtTBmi/M9gZ7Jk9bM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "ec172013fa62135f58fb58dd17ae9651e8f39727",
+        "rev": "640725978b99076e18e069f6e7d2959124584f8f",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
-        "ref": "release-26.05",
+        "ref": "master",
         "repo": "home-manager",
         "type": "github"
       }
@@ -219,7 +219,7 @@
     "metadb": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-/Yyh6a95Ni/5rUVtK9ah444SyU2jzm1NmShQrfqjwjk=",
+        "narHash": "sha256-1bA8JV+8BdK72BScMdW4lKhdTydXSwQzic2GEoTChPM=",
         "type": "file",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
       },
@@ -252,27 +252,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1790098735,
-        "narHash": "sha256-fKlDQweTQH7bVVlRVqKQAFS9wtGNo+e+BoFGlSuuOX8=",
+        "lastModified": 1791921157,
+        "narHash": "sha256-K5yBvITZZy78fORvz6rkUR/Lorv/31i/29YjIMeXcZk=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "bf5e1b1a711d8231102bdd91c7649ea043ac3ccb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Melorise",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-unstable": {
-      "locked": {
-        "lastModified": 1790098735,
-        "narHash": "sha256-fKlDQweTQH7bVVlRVqKQAFS9wtGNo+e+BoFGlSuuOX8=",
-        "owner": "Melorise",
-        "repo": "nixpkgs",
-        "rev": "bf5e1b1a711d8231102bdd91c7649ea043ac3ccb",
+        "rev": "9cc204d1b8ccd30098ab85b10df264ad8f133516",
         "type": "github"
       },
       "original": {
@@ -284,27 +268,27 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1790098689,
-        "narHash": "sha256-EUWGsWVsvxpZI2r3B90P85noeqSGuwyIalaIyRwrHNs=",
+        "lastModified": 1791921157,
+        "narHash": "sha256-K5yBvITZZy78fORvz6rkUR/Lorv/31i/29YjIMeXcZk=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "50353e5e5cf7df14578f896058de313b67e3b8ef",
+        "rev": "9cc204d1b8ccd30098ab85b10df264ad8f133516",
         "type": "github"
       },
       "original": {
         "owner": "Melorise",
-        "ref": "nixos-26.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1790098735,
-        "narHash": "sha256-fKlDQweTQH7bVVlRVqKQAFS9wtGNo+e+BoFGlSuuOX8=",
+        "lastModified": 1791921157,
+        "narHash": "sha256-K5yBvITZZy78fORvz6rkUR/Lorv/31i/29YjIMeXcZk=",
         "owner": "Melorise",
         "repo": "nixpkgs",
-        "rev": "bf5e1b1a711d8231102bdd91c7649ea043ac3ccb",
+        "rev": "9cc204d1b8ccd30098ab85b10df264ad8f133516",
         "type": "github"
       },
       "original": {
@@ -321,16 +305,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1785384808,
-        "narHash": "sha256-rA6xKrADseZlfscWK2wU/VB21qWPB7i7NLpr848UIYE=",
+        "lastModified": 1785384697,
+        "narHash": "sha256-meS8RwmpkSitlvEEW7XaMEPkqZA+uYVBW2XdcfeO37M=",
         "owner": "Melorise",
         "repo": "nPanel",
-        "rev": "723647e3df71afeece5dab20c64c32d31b2e4f3b",
+        "rev": "930b1b37fc7420313fe2d2f5416f68f80cfeb7ed",
         "type": "github"
       },
       "original": {
         "owner": "Melorise",
-        "ref": "nixos-26.05/v2.0.3",
+        "ref": "nixos-unstable/v2.0.3",
         "repo": "nPanel",
         "type": "github"
       }
@@ -344,11 +328,11 @@
         "home-manager": "home-manager",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-unstable": "nixpkgs-unstable",
         "npanel": "npanel",
         "spark-store": "spark-store",
         "spark-winfonts": "spark-winfonts",
-        "tama-asr": "tama-asr"
+        "tama-asr": "tama-asr",
+        "tuanjiehub": "tuanjiehub"
       }
     },
     "spark-store": {
@@ -371,7 +355,7 @@
     "spark-winfonts": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs"
         ],
         "winfonts": "winfonts"
       },
@@ -412,17 +396,51 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1790107924,
-        "narHash": "sha256-IK+UsGsSaes7c4NFKyVN1DQrA9oT+StCl/dwpTnIcgg=",
+        "lastModified": 1791928273,
+        "narHash": "sha256-n35uCN8tKLLwgRx5tsTVrrMTOdhPyQdGBEmC+6/JP7g=",
         "owner": "Melorise",
         "repo": "TamaASR",
-        "rev": "18ed2eb43a036853d5e918e4ec6774522bd99deb",
+        "rev": "2033f4ccff5c04abb4514323e95f2757a6991125",
         "type": "github"
       },
       "original": {
         "owner": "Melorise",
         "repo": "TamaASR",
         "type": "github"
+      }
+    },
+    "tuanjiehub": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "tuanjiehub-deb": "tuanjiehub-deb"
+      },
+      "locked": {
+        "lastModified": 1792516070,
+        "narHash": "sha256-wOW3stsiMkla+8Sjq+gtYsjc6z3hM8aUP7iV0FqaZeo=",
+        "owner": "Melorise",
+        "repo": "TuanjieHubForNix",
+        "rev": "794cb30a21197db3eeff34121b1fd9ea6a03cda3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Melorise",
+        "ref": "main",
+        "repo": "TuanjieHubForNix",
+        "type": "github"
+      }
+    },
+    "tuanjiehub-deb": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-RTnD+WT367KG+wIz9aXlDq2D896m12widDWdmM155Vk=",
+        "type": "file",
+        "url": "https://public-cdn.tuanjie.cn/hub/prod/tuanjiehub-amd64.deb"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://public-cdn.tuanjie.cn/hub/prod/tuanjiehub-amd64.deb"
       }
     },
     "winfonts": {
